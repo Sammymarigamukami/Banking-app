@@ -6,7 +6,6 @@ import { TransactionTable } from "./dashboard/transaction-table"
 import { AnalyticsCards } from "./dashboard/analytics-card"
 import { CardPreview } from "./dashboard/card-preview"
 import { SavingsGoals } from "./dashboard/saving-goal"
-import { Navbar } from "./dashboard/nav-bar"
 
 export default function UserHomePage() {
   return (
