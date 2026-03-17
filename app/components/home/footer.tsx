@@ -70,7 +70,7 @@ export function Footer() {
               </li>
               <li>
                 <span className="block">Address</span>
-                <span className="text-background">100 Financial Plaza, New York, NY 10001</span>
+                <span className="text-background">100 Financial Plaza, Kenya, Nairobi 00100</span>
               </li>
             </ul>
           </div>

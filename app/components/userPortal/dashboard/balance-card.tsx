@@ -16,9 +16,9 @@ export function BalanceCard({ className }: { className?: string }) {
       <CardContent className="space-y-4">
         <div className="flex items-baseline gap-2">
           <span className="text-4xl font-bold text-foreground">
-            ${primaryAccount.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            Ksh{primaryAccount.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
           </span>
-          <span className="text-sm text-muted-foreground">USD</span>
+          <span className="text-sm text-muted-foreground">KSH</span>
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="flex items-center gap-2 rounded-lg bg-secondary/50 p-3">
@@ -28,7 +28,7 @@ export function BalanceCard({ className }: { className?: string }) {
             <div>
               <p className="text-xs text-muted-foreground">Income this month</p>
               <p className="text-sm font-semibold text-foreground">
-                +${monthlyStats.income.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                +Ksh{monthlyStats.income.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
@@ -39,7 +39,7 @@ export function BalanceCard({ className }: { className?: string }) {
             <div>
               <p className="text-xs text-muted-foreground">Expenses this month</p>
               <p className="text-sm font-semibold text-foreground">
-                -${monthlyStats.expenses.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                -Ksh{monthlyStats.expenses.toLocaleString("en-US", { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>

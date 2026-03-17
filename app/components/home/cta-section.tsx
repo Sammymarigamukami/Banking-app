@@ -1,8 +1,11 @@
 
 import { ArrowRight } from "lucide-react"
 import { Button } from "../ui/button"
+import { useNavigate } from "react-router"
 
 export function CTASection() {
+
+    const navigate = useNavigate()
   return (
     <section className="px-4 py-20 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
@@ -18,7 +21,11 @@ export function CTASection() {
             <p className="mx-auto mb-8 max-w-lg text-muted-foreground">
               Join millions of users who trust NexusBank for their everyday banking needs.
             </p>
-            <Button size="lg" className="gap-2">
+            <Button 
+            size="lg" 
+            className="gap-2"
+            onClick={() => navigate("/RegisterAccount")}
+            >
               Create Free Account
               <ArrowRight className="size-4" />
             </Button>

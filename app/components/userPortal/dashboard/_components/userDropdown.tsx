@@ -1,6 +1,7 @@
 import { ChevronDown, User } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
+import { toast } from "sonner";
 import { logout } from "~/api/auth";
 import { Avatar, AvatarImage } from "~/components/ui/avatar";
 import { Button } from "~/components/ui/button";

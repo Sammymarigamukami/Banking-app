@@ -49,11 +49,11 @@ export default function AccountsPage() {
                 <div>
                   <p className="text-xs text-muted-foreground">Available Balance</p>
                   <p className="text-2xl font-bold text-foreground">
-                    ${account.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                    Ksh{account.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
                   </p>
                 </div>
                 <Button variant="outline" size="sm" className="w-full" asChild>
-                  <Link href="/dashboard/transfer">
+                  <Link to="/dashboard/transfer">
                     <ArrowLeftRight className="mr-2 h-4 w-4" />
                     Quick Transfer
                   </Link>
@@ -70,7 +70,7 @@ export default function AccountsPage() {
           <div>
             <p className="text-sm opacity-90">Total Balance Across All Accounts</p>
             <p className="text-3xl font-bold">
-              $
+              Ksh
               {accounts
                 .reduce((sum, acc) => sum + acc.balance, 0)
                 .toLocaleString("en-US", { minimumFractionDigits: 2 })}

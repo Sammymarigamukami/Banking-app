@@ -1,6 +1,6 @@
 export const userData = {
-  name: "John",
-  email: "john.doe@email.com",
+  name: "Null",
+  email: "null@email.com",
   avatar: "/avatars/user.jpg",
 }
 
@@ -34,7 +34,7 @@ export const transactions = [
     date: "Mar 12, 2026",
     description: "Amazon Purchase",
     category: "Shopping",
-    amount: -89.99,
+    amount: -8956.99,
     status: "completed",
   },
   {
@@ -58,7 +58,7 @@ export const transactions = [
     date: "Mar 9, 2026",
     description: "Transfer to Savings",
     category: "Transfer",
-    amount: -500.0,
+    amount: -50043.0,
     status: "completed",
   },
   {
@@ -66,7 +66,7 @@ export const transactions = [
     date: "Mar 8, 2026",
     description: "Uber Ride",
     category: "Transport",
-    amount: -23.45,
+    amount: -2334.45,
     status: "completed",
   },
   {
@@ -74,7 +74,7 @@ export const transactions = [
     date: "Mar 7, 2026",
     description: "Grocery Store",
     category: "Food",
-    amount: -156.78,
+    amount: -1563.78,
     status: "pending",
   },
 ]
@@ -82,7 +82,7 @@ export const transactions = [
 export const cardData = {
   type: "Visa Debit",
   number: "4521 **** **** 7832",
-  holder: "JOHN DOE",
+  holder: "Null",
   expiry: "09/28",
   cvv: "***",
 }

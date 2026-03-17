@@ -67,7 +67,7 @@ export default function TransferPage() {
                       <SelectContent>
                         {accounts.map((account) => (
                           <SelectItem key={account.id} value={account.id}>
-                            {account.name} ({account.number}) - $
+                            {account.name} ({account.number}) - Ksh
                             {account.balance.toLocaleString()}
                           </SelectItem>
                         ))}
@@ -97,13 +97,13 @@ export default function TransferPage() {
                     <FieldLabel htmlFor="amount">Amount</FieldLabel>
                     <div className="relative">
                       <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                        $
+                        Ksh
                       </span>
                       <Input
                         id="amount"
                         type="number"
                         placeholder="0.00"
-                        className="pl-7"
+                        className="pl-9"
                         min="0.01"
                         step="0.01"
                         required
@@ -141,15 +141,15 @@ export default function TransferPage() {
             <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm">Daily Limit</span>
-                <span className="font-medium">$10,000</span>
+                <span className="font-medium">Ksh10,000</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Monthly Limit</span>
-                <span className="font-medium">$50,000</span>
+                <span className="font-medium">Ksh50,000</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm">Remaining Today</span>
-                <span className="font-medium text-green-600">$10,000</span>
+                <span className="font-medium text-green-600">Ksh10,000</span>
               </div>
             </CardContent>
           </Card>
@@ -161,7 +161,7 @@ export default function TransferPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {["Jane Smith", "Bob Johnson", "Alice Brown"].map((name, i) => (
+              {["sam"].map((name, i) => (
                 <div
                   key={i}
                   className="flex cursor-pointer items-center justify-between rounded-lg p-2 transition-colors hover:bg-secondary"

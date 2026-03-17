@@ -26,15 +26,15 @@ const billCategories = [
 ]
 
 const scheduledPayments = [
-  { name: "Netflix Subscription", amount: 15.99, date: "Mar 15, 2026", status: "upcoming" },
-  { name: "Gym Membership", amount: 49.0, date: "Mar 18, 2026", status: "upcoming" },
-  { name: "Spotify Premium", amount: 9.99, date: "Mar 20, 2026", status: "upcoming" },
+  { name: "Netflix Subscription", amount: 2315.99, date: "Mar 15, 2026", status: "upcoming" },
+  { name: "Gym Membership", amount: 3249.0, date: "Mar 18, 2026", status: "upcoming" },
+  { name: "Spotify Premium", amount: 2329.99, date: "Mar 20, 2026", status: "upcoming" },
 ]
 
 const recentPayments = [
-  { name: "Electric Company", amount: 124.5, date: "Mar 10, 2026", status: "paid" },
-  { name: "Water Utility", amount: 45.0, date: "Mar 8, 2026", status: "paid" },
-  { name: "Internet Provider", amount: 79.99, date: "Mar 5, 2026", status: "paid" },
+  { name: "Electric Company", amount: 1244.5, date: "Mar 10, 2026", status: "paid" },
+  { name: "Water Utility", amount: 4554.0, date: "Mar 8, 2026", status: "paid" },
+  { name: "Internet Provider", amount: 5679.99, date: "Mar 5, 2026", status: "paid" },
 ]
 
 export default function PaymentsPage() {
@@ -103,7 +103,7 @@ export default function PaymentsPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold">${payment.amount.toFixed(2)}</p>
+                  <p className="font-semibold">Ksh{payment.amount.toFixed(2)}</p>
                   <Badge variant="secondary" className="text-xs">
                     {payment.status}
                   </Badge>
@@ -137,7 +137,7 @@ export default function PaymentsPage() {
                   <p className="text-sm text-muted-foreground">{payment.date}</p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold">${payment.amount.toFixed(2)}</p>
+                  <p className="font-semibold">Ksh{payment.amount.toFixed(2)}</p>
                   <Badge
                     variant="secondary"
                     className="bg-green-100 text-green-700 text-xs hover:bg-green-100"

@@ -30,7 +30,7 @@ export function QuickActions() {
               className="h-auto flex-col gap-2 py-4 hover:bg-primary hover:text-primary-foreground"
               asChild
             >
-              <Link href={action.href}>
+              <Link to={action.href}>
                 <action.icon className="h-5 w-5" />
                 <span className="text-xs">{action.label}</span>
               </Link>

@@ -28,14 +28,14 @@ export default function AnalyticsPage() {
         {[
           {
             title: "Total Income",
-            value: `$${monthlyStats.income.toLocaleString()}`,
+            value: `Ksh${monthlyStats.income.toLocaleString()}`,
             change: "+12.5%",
             trend: "up",
             icon: DollarSign,
           },
           {
             title: "Total Expenses",
-            value: `$${monthlyStats.expenses.toLocaleString()}`,
+            value: `Ksh${monthlyStats.expenses.toLocaleString()}`,
             change: "-3.2%",
             trend: "down",
             icon: TrendingDown,
@@ -49,7 +49,7 @@ export default function AnalyticsPage() {
           },
           {
             title: "Net Worth",
-            value: "$146,801",
+            value: `Ksh${monthlyStats.expenses.toLocaleString()}`,
             change: "+8.4%",
             trend: "up",
             icon: TrendingUp,
@@ -98,7 +98,7 @@ export default function AnalyticsPage() {
                     <span className="font-medium">{item.category}</span>
                   </div>
                   <div className="text-right">
-                    <span className="font-semibold">${item.amount}</span>
+                    <span className="font-semibold">Ksh{item.amount}</span>
                     <span className="ml-2 text-sm text-muted-foreground">
                       ({item.percentage}%)
                     </span>
@@ -117,7 +117,7 @@ export default function AnalyticsPage() {
             ))}
             <div className="flex items-center justify-between border-t border-border pt-4">
               <span className="font-medium">Total</span>
-              <span className="text-lg font-bold">${totalSpending.toLocaleString()}</span>
+              <span className="text-lg font-bold">Ksh{totalSpending.toLocaleString()}</span>
             </div>
           </CardContent>
         </Card>
@@ -133,14 +133,14 @@ export default function AnalyticsPage() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium">{month.month} 2026</span>
                   <span className="text-muted-foreground">
-                    Net: ${(month.income - month.expenses).toLocaleString()}
+                    Net: Ksh{(month.income - month.expenses).toLocaleString()}
                   </span>
                 </div>
                 <div className="flex gap-2">
                   <div className="flex-1">
                     <div className="mb-1 flex justify-between text-xs">
                       <span className="text-green-600">Income</span>
-                      <span>${month.income.toLocaleString()}</span>
+                      <span>Ksh{month.income.toLocaleString()}</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-green-100">
                       <div
@@ -152,12 +152,12 @@ export default function AnalyticsPage() {
                   <div className="flex-1">
                     <div className="mb-1 flex justify-between text-xs">
                       <span className="text-red-600">Expenses</span>
-                      <span>${month.expenses.toLocaleString()}</span>
+                      <span>Ksh{month.expenses.toLocaleString()}</span>
                     </div>
                     <div className="h-2 overflow-hidden rounded-full bg-red-100">
                       <div
                         className="h-full bg-red-500"
-                        style={{ width: `${(month.expenses / 7000) * 100}%` }}
+                        style={{ width: `Ksh{(month.expenses / 7000) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -189,10 +189,10 @@ export default function AnalyticsPage() {
                   <p className="text-sm font-medium">{item.category}</p>
                   <div className="mt-2 flex items-baseline gap-1">
                     <span className={`text-xl font-bold ${isOver ? "text-red-600" : ""}`}>
-                      ${item.spent}
+                      Ksh{item.spent}
                     </span>
                     <span className="text-sm text-muted-foreground">
-                      / ${item.budget}
+                      / Ksh{item.budget}
                     </span>
                   </div>
                   <Progress
@@ -205,8 +205,8 @@ export default function AnalyticsPage() {
                     }`}
                   >
                     {isOver
-                      ? `$${item.spent - item.budget} over budget`
-                      : `$${item.budget - item.spent} remaining`}
+                      ? `Ksh${item.spent - item.budget} over budget`
+                      : `Ksh${item.budget - item.spent} remaining`}
                   </p>
                 </div>
               )

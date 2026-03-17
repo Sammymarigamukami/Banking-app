@@ -9,7 +9,7 @@ const cards = [
     id: "1",
     type: "Visa Debit",
     number: "4521 **** **** 7832",
-    holder: "JOHN DOE",
+    holder: "Null",
     expiry: "09/28",
     status: "active",
     color: "from-primary via-primary to-accent",
@@ -18,7 +18,7 @@ const cards = [
     id: "2",
     type: "Mastercard Credit",
     number: "5432 **** **** 1234",
-    holder: "JOHN DOE",
+    holder: "Null",
     expiry: "12/27",
     status: "active",
     color: "from-slate-700 via-slate-800 to-slate-900",
@@ -120,7 +120,7 @@ export default function CardsPage() {
             {[
               { title: "Cashback", value: "2%", description: "On all purchases" },
               { title: "Points Earned", value: "12,450", description: "This month" },
-              { title: "Travel Insurance", value: "Included", description: "Up to $500K" },
+              { title: "Travel Insurance", value: "Included", description: "Up to Ksh500K" },
               { title: "ATM Withdrawals", value: "Free", description: "Worldwide" },
             ].map((benefit, i) => (
               <div key={i} className="rounded-lg bg-secondary/50 p-4">

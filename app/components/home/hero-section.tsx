@@ -1,8 +1,10 @@
 
 import { ArrowRight, CreditCard, Shield, TrendingUp } from "lucide-react"
 import { Button } from "../ui/button"
+import { useNavigate } from "react-router"
 
 export function HeroSection() {
+  const navigate = useNavigate()
   return (
     <section className="relative overflow-hidden px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-32">
       <div className="mx-auto max-w-7xl">
@@ -16,7 +18,11 @@ export function HeroSection() {
               Secure, fast and intelligent financial services designed to help individuals and businesses grow.
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button size="lg" className="gap-2">
+              <Button 
+              size="lg" 
+              className="gap-2"
+              onClick={() => navigate("/RegisterAccount")}
+              >
                 Open an Account
                 <ArrowRight className="size-4" />
               </Button>
@@ -63,7 +69,7 @@ export function HeroSection() {
                 <p className="mb-3 text-sm font-medium text-foreground">Recent Transactions</p>
                 <div className="space-y-3">
                   {[
-                    { name: "Coffee Shop", amount: "Ksh 600", type: "expense" },
+                    { name: "Coffee Shop", amount: "Ksh -600", type: "expense" },
                     { name: "Salary Deposit", amount: "Ksh +500,099.00", type: "income" },
                     { name: "Grocery Store", amount: "Ksh -89,578.40", type: "expense" },
                   ].map((tx, i) => (

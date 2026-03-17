@@ -35,7 +35,7 @@ export function SavingsGoals() {
                   </div>
                   <Progress value={percentage} className="mt-1 h-2" />
                   <p className="mt-1 text-xs text-muted-foreground">
-                    ${goal.saved.toLocaleString()} / ${goal.target.toLocaleString()}
+                    Ksh{goal.saved.toLocaleString()} / Ksh{goal.target.toLocaleString()}
                   </p>
                 </div>
               </div>

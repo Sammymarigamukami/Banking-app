@@ -78,7 +78,7 @@ export default function TransactionsPage() {
                     )}
                   >
                     {transaction.amount > 0 ? "+" : ""}
-                    ${Math.abs(transaction.amount).toFixed(2)}
+                    Ksh{Math.abs(transaction.amount).toFixed(2)}
                   </TableCell>
                   <TableCell className="pr-6 text-right">
                     <Badge

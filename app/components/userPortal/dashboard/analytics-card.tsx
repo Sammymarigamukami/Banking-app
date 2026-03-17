@@ -20,14 +20,14 @@ export function AnalyticsCards() {
           <div key={item.category} className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium">{item.category}</span>
-              <span className="text-muted-foreground">${item.amount}</span>
+              <span className="text-muted-foreground">Ksh{item.amount}</span>
             </div>
             <Progress value={item.percentage} className="h-2" />
           </div>
         ))}
         <div className="flex items-center justify-between border-t border-border pt-4">
           <span className="text-sm font-medium">Total Spending</span>
-          <span className="text-lg font-semibold">${total.toLocaleString()}</span>
+          <span className="text-lg font-semibold">Ksh{total.toLocaleString()}</span>
         </div>
       </CardContent>
     </Card>
