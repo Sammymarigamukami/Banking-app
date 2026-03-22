@@ -10,6 +10,14 @@ import { Toaster } from "sonner"
 
 import type { Route } from "./+types/root"
 import "./app.css"
+import { DepositProvider } from "./components/userPortal/dashboard/context/depositContext"
+import { DepositUI } from "./components/userPortal/dashboard/_components/mpesa-deposit"
+import { RequestMoneyProvider } from "./components/userPortal/dashboard/context/requestContext"
+import { RequestMoney } from "./components/userPortal/dashboard/_components/request-money"
+import { PaybillProvider } from "./components/userPortal/dashboard/context/paybillContext"
+import { Paybill } from "./components/userPortal/dashboard/_components/paybill"
+import { SendMoneyProvider } from "./components/userPortal/dashboard/context/sendMoneyContext"
+import { SendMoney } from "./components/userPortal/dashboard/_components/send-money"
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -21,7 +29,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <DepositProvider>
+        <RequestMoneyProvider >
+        <PaybillProvider>
+        <SendMoneyProvider>
         {children}
+        <SendMoney />
+        <Paybill />
+        <RequestMoney />
+        <DepositUI />
+        </SendMoneyProvider>
+        </PaybillProvider>
+        </RequestMoneyProvider>
+        </DepositProvider>
         <Toaster />
         <ScrollRestoration />
         <Scripts />

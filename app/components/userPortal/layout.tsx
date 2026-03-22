@@ -1,8 +1,11 @@
 import  { Outlet } from "react-router";
 import { Navbar } from "./dashboard/nav-bar";
+import { useAuthRedirect } from "~/api/auth";
 
 
 export default function customerPortalLayout() {
+    const user = useAuthRedirect();
+    if (!user) return null;
     return (
         <>
         <Navbar />

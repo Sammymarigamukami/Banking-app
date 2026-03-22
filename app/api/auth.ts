@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { apiClient } from "./index";
+import { useNavigate } from "react-router";
 
 /**
  * 
@@ -76,4 +78,91 @@ export async function logout() {
   localStorage.removeItem("tokenExpiration");
   localStorage.removeItem("role");
   return Promise.resolve("Logout Successful");
+}
+
+export function useAuthRedirect() {
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = localStorage.getItem("token");
+      const tokenExpiration = localStorage.getItem("tokenExpiration");
+
+      // Token missing or expired
+      if (!token || !tokenExpiration || Date.now() > +tokenExpiration) {
+        localStorage.clear();
+        navigate("/CustomerLogin");
+        return;
+      }
+
+      try {
+        const response = await apiClient.get("/login/user-auth");
+        const { user } = response.data;
+        console.log("Auth check response:", response.data);
+
+        if (!user) {
+          localStorage.clear();
+          navigate("/CustomerLogin");
+          return;
+        }
+
+        setUser(user);
+      } catch (err) {
+        console.error("Auth check failed:", err);
+        localStorage.clear();
+        navigate("/CustomerLogin");
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
+
+  return user;
+}
+
+export interface Transaction {
+  date: string;
+  description: string | null;
+  transaction_type: string;
+  amount: string;
+  status: string;
+}
+
+export async function getCustomerTransactions(customer_id: string): Promise<Transaction[]> {
+  try {
+    const response = await apiClient.get("/transactions/customer", {
+      params: { customer_id } // sends as query parameter
+    });
+    return response.data; 
+  } catch (error: any) {
+    console.error("Failed to fetch transactions:", error);
+    return [];
+  }
+}
+
+export interface Account {
+  id: number;
+  number: string;
+  type: string;
+  currency: string;
+  balance: number;
+  status: string;
+}
+
+export interface UserAccounts {
+  customerID: number;
+  accounts: Account[];
+}
+
+export async function getCurrentAccount(customerID: number): Promise<Account | null> {
+  try {
+    const response = await apiClient.get("/user/api/getBalance", { params: { customerID } });
+    const accounts: Account[] = response.data.accounts;
+    console.log("Fetched accounts:", accounts);
+    return accounts.find(acc => acc.type === "current") || null;
+  } catch (error: any) {
+    console.error("Failed to fetch current account:", error);
+    return null;
+  }
 }
