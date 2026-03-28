@@ -1,35 +1,77 @@
+
 import { useEffect, useState } from "react";
 import { apiClient } from "./index";
 import { useNavigate } from "react-router";
 
-/**
- * 
- * @param credentials 
- * @returns 
- * 
- * login function that takes user credentials and sends a POST request to the appropriate login endpoint based on the user's role (customer or employee). If the login is successful, it stores the JWT token, its expiration time, and the user's role in localStorage for future authenticated requests. If the login fails, it returns a rejected promise with the error message.
- */
-export async function login(credentials: any) {
+
+
+// Helper to decode JWT expiration
+const getTokenExpiration = (token: string) => {
   try {
-    const url =
-      credentials.loginDetails.role === "customer"
-        ? "/login/customer"
-        : "/login/employee";
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload.exp * 1000;
+  } catch {
+    return Date.now() + 3600000; // Fallback to 1 hour if decoding fails
+  }
+};
+const persistSession = (user: any) => {
+  localStorage.setItem("token", user.token);
+  localStorage.setItem("tokenExpiration", getTokenExpiration(user.token).toString());
+  localStorage.setItem("role", user.role);
+  localStorage.setItem("userName", user.displayName);
+};
+/**
+ * CUSTOMER LOGIN
+ */
+export async function loginCustomer(credentials: any) {
+  try {
+    const response = await apiClient.post("/login/customer", credentials);
 
-    const response = await apiClient.post(url, credentials);
-
-    if (response.data.auth === "success") {
-      const expiresIn =
-        credentials.loginDetails.role === "customer" ? 900_000 : 7_200_000; // ms
-      localStorage.setItem("token", response.data.token);
-      localStorage.setItem("tokenExpiration", (Date.now() + expiresIn).toString());
-      localStorage.setItem("role", response.data.role);
-      return response.data;
-    } else {
-      return Promise.reject(response.data.message);
+    if (response.data.auth !== "success") {
+      throw new Error(response.data.message || "Customer login failed");
     }
+
+    const data = response.data;
+    const user = {
+      token: data.token,
+      role: "customer",
+      userId: data.customerId,
+      displayName: data.userName, // Customer API uses userName
+      email: data.email,
+    };
+
+    persistSession(user);
+    return user;
   } catch (error: any) {
-    return Promise.reject(error.message);
+    return Promise.reject(error.response?.data?.message || error.message || "Server Error");
+  }
+}
+
+/**
+ * EMPLOYEE / ADMIN LOGIN
+ */
+export async function loginEmployee(credentials: any) {
+  try {
+    const response = await apiClient.post("/login/employee", credentials);
+
+    if (response.data.auth !== "success") {
+      throw new Error(response.data.message || "Employee login failed");
+    }
+
+    const data = response.data;
+    const user = {
+      token: data.token,
+      // Take the first role from the roles array (e.g., "employee" or "admin")
+      role: data.roles?.[0] || "employee",
+      userId: data.employeeId,
+      displayName: data.username, // Employee API uses username (lowercase)
+      branchId: data.branchId,
+    };
+
+    persistSession(user);
+    return user;
+  } catch (error: any) {
+    return Promise.reject(error.response?.data?.message || error.message || "Server Error");
   }
 }
 
@@ -38,7 +80,9 @@ export async function login(credentials: any) {
  * @param userData 
  * @returns 
  * 
- * registerCustomer function that takes user data and sends a POST request to the customer registration endpoint. If the registration is successful, it stores the JWT token, its expiration time, and the user's role in localStorage. If the registration fails, it returns a rejected promise with the error message.
+ * registerCustomer function that takes user data and sends a POST request to the 
+ * customer registration endpoint. If the registration is successful, it stores the JWT token, its expiration time,
+ *  and the user's role in localStorage. If the registration fails, it returns a rejected promise with the error message.
  */
 export async function registerCustomer(userData: any) {
   try {
@@ -81,45 +125,94 @@ export async function logout() {
 }
 
 export function useAuthRedirect() {
-  const [user, setUser] = useState<User | null>(null);
+  const [customer, setCustomer] = useState<any | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkCustomer = async () => {
       const token = localStorage.getItem("token");
-      const tokenExpiration = localStorage.getItem("tokenExpiration");
+      const role = localStorage.getItem("role");
+      const expiry = localStorage.getItem("tokenExpiration");
 
-      // Token missing or expired
-      if (!token || !tokenExpiration || Date.now() > +tokenExpiration) {
+      if (!token || role !== "customer" || Date.now() > Number(expiry)) {
         localStorage.clear();
-        navigate("/CustomerLogin");
+        navigate("/CustomerLogin"); 
         return;
       }
 
       try {
         const response = await apiClient.get("/login/user-auth");
-        const { user } = response.data;
-        console.log("Auth check response:", response.data);
+        const user = response.data.user;
+        console.log("Authenticated user data:", user); // Log the user data for debugging
 
-        if (!user) {
-          localStorage.clear();
-          navigate("/CustomerLogin");
-          return;
+        if (!user || user.role !== "customer") {
+          throw new Error("Unauthorized");
         }
 
-        setUser(user);
+        setCustomer(user);
       } catch (err) {
-        console.error("Auth check failed:", err);
         localStorage.clear();
         navigate("/CustomerLogin");
       }
     };
 
-    checkAuth();
+    checkCustomer();
   }, [navigate]);
 
-  return user;
+  return customer;
 }
+
+
+export function useEmployeeAuth() {
+  const [employee, setEmployee] = useState<any | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkEmployee = async () => {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      const expiry = localStorage.getItem("tokenExpiration");
+
+      // 1. Initial Local Check
+      // Block anyone who isn't an employee/admin or has an expired token
+      const isStaff = role === "employee" || role === "admin" || role === "manager";
+      
+      if (!token || !isStaff || Date.now() > Number(expiry)) {
+        console.warn("Unauthorized access attempt or session expired.");
+        localStorage.clear();
+        navigate("/AdminLogin"); // Direct redirect to Admin portal login
+        return;
+      }
+
+      try {
+        // 2. Server-Side Verification
+        const response = await apiClient.get("/login/user-auth");
+        const userData = response.data.user;
+
+        // Ensure the server confirms they still have a staff role
+        const serverRoles = Array.isArray(userData.role) ? userData.role : [userData.role];
+        const hasStaffAccess = serverRoles.some((r: string) => 
+          ["employee", "admin", "manager"].includes(r)
+        );
+
+        if (!userData || !hasStaffAccess) {
+          throw new Error("Insufficient permissions");
+        }
+
+        setEmployee(userData);
+      } catch (err) {
+        console.error("Employee Auth Check Failed:", err);
+        localStorage.clear();
+        navigate("/AdminLogin");
+      }
+    };
+
+    checkEmployee();
+  }, [navigate]);
+
+  return employee;
+}
+
 
 export interface Transaction {
   date: string;
@@ -164,5 +257,15 @@ export async function getCurrentAccount(customerID: number): Promise<Account | n
   } catch (error: any) {
     console.error("Failed to fetch current account:", error);
     return null;
+  }
+}
+
+export async function depositViaPpesa(customerID: number, amount: number, phoneNumber: string): Promise<string> {
+  try {
+    const response = await apiClient.post("/user/api/deposit", { customerID, amount, phoneNumber });
+    return response.data.message;
+  } catch (error: any) {
+    console.error("Failed to deposit via Ppesa:", error);
+    return "Deposit failed";
   }
 }

@@ -6,10 +6,10 @@ import { Input } from "~/components/ui/input"
 import { Label } from "~/components/ui/label"
 import { Button } from "~/components/ui/button"
 
-import { login } from "~/api/auth"
+// Import the specific customer login function
+import { loginCustomer } from "~/api/auth"
 
-export default function LoginForm() {
-
+export default function CustomerLoginForm() {
   const navigate = useNavigate()
 
   const [userName, setUserName] = useState("")
@@ -24,22 +24,23 @@ export default function LoginForm() {
     setError(null)
 
     try {
-
-      const data = await login({
+      // Call the isolated customer API utility
+      const data = await loginCustomer({
         loginDetails: {
           userName: userName,
           password,
-          role: "customer"
         }
       })
 
-      console.log("Login success:", data)
+      console.log("Customer Login success:", data)
 
+      // Redirect to customer-specific area
       navigate("/customerPortal")
 
     } catch (err: any) {
-      console.error("Login failed:", err)
-      setError(err.message)
+      console.error("Customer Login failed:", err)
+      // Display the error string returned by the API utility
+      setError(err)
     } finally {
       setLoading(false)
     }
@@ -49,35 +50,37 @@ export default function LoginForm() {
     <Card className="w-[380px] bg-muted/30 text-gray-100 shadow-lg">
       <CardHeader>
         <CardTitle className="text-center text-gray-100">
-          Login Account
+          Customer Login
         </CardTitle>
       </CardHeader>
 
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           {error && (
-            <p className="text-red-400 text-sm">{error}</p>
+            <p className="text-red-400 text-sm text-center">{error}</p>
           )}
 
           <div className="space-y-2">
-            <Label>Username</Label>
+            <Label htmlFor="customer-username">Username</Label>
             <Input
+              id="customer-username"
               type="text"
               placeholder="Enter your username"
               value={userName}
-              onChange={(e)=>setUserName(e.target.value)}
+              onChange={(e) => setUserName(e.target.value)}
               required
               className="text-gray-900 bg-muted/30 border-gray-600 placeholder:text-gray-400"
             />
           </div>
 
           <div className="space-y-2">
-            <Label>Password</Label>
+            <Label htmlFor="customer-password">Password</Label>
             <Input
+              id="customer-password"
               type="password"
               placeholder="********"
               value={password}
-              onChange={(e)=>setPassword(e.target.value)}
+              onChange={(e) => setPassword(e.target.value)}
               required
               className="text-gray-900 bg-muted/30 border-gray-600 placeholder:text-gray-400"
             />
@@ -91,10 +94,15 @@ export default function LoginForm() {
           >
             {loading ? "Logging in..." : "Login"}
           </Button>
-          <p
-          className="text-gray-950  cursor-pointer text-center text-sm"
-          >
-          Create an account? <span className="underline" onClick={() => navigate("/RegisterAccount")}>Click here</span>
+          
+          <p className="text-gray-950 cursor-pointer text-center text-sm">
+            Create an account?{" "}
+            <span 
+              className="underline" 
+              onClick={() => navigate("/RegisterAccount")}
+            >
+              Click here
+            </span>
           </p>
         </form>
       </CardContent>

@@ -7,7 +7,7 @@ import { Sheet, SheetContent, SheetTrigger } from "~/components/ui/sheet"
 
 import { useEffect, useState } from "react"
 import { isAuth, logout, type User } from "~/api/auth"
-import { UserDropdown } from "~/components/userPortal/dashboard/_components/userDropdown"
+import { EmployeeDropdown } from "../emloyeeUserDropdown"
 
 const navLinks = [
   { name: "Dashboard", path: "/adminPortal" },
@@ -94,13 +94,12 @@ export function Navbar() {
 
         {/* Action Buttons */}
         <div className="hidden items-center gap-3 md:flex">
-          {/* {!loading && user && (
-            <UserDropdown
+           {!loading && user && (
+            <EmployeeDropdown
               accountId={user.id}
-              email={user.email}
               username={user.username}
             />
-          )} */}
+          )} 
         </div>
       </div>
     </header>

@@ -4,8 +4,9 @@ import { useAuthRedirect } from "~/api/auth";
 
 
 export default function customerPortalLayout() {
-    const user = useAuthRedirect();
-    if (!user) return null;
+    const customer = useAuthRedirect();
+    console.log("Customer Auth State in Layout:", customer); // Debug log to check auth state
+    if (!customer) return null;
     return (
         <>
         <Navbar />
