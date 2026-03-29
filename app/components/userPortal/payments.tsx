@@ -27,14 +27,10 @@ const billCategories = [
 
 const scheduledPayments = [
   { name: "Netflix Subscription", amount: 2315.99, date: "Mar 15, 2026", status: "upcoming" },
-  { name: "Gym Membership", amount: 3249.0, date: "Mar 18, 2026", status: "upcoming" },
-  { name: "Spotify Premium", amount: 2329.99, date: "Mar 20, 2026", status: "upcoming" },
 ]
 
 const recentPayments = [
   { name: "Electric Company", amount: 1244.5, date: "Mar 10, 2026", status: "paid" },
-  { name: "Water Utility", amount: 4554.0, date: "Mar 8, 2026", status: "paid" },
-  { name: "Internet Provider", amount: 5679.99, date: "Mar 5, 2026", status: "paid" },
 ]
 
 export default function PaymentsPage() {

@@ -11,11 +11,11 @@ import { isAuth, logout, type User } from "~/api/auth"
 const navLinks = [
   { name: "Dashboard", path: "/customerPortal" },
   { name: "Accounts", path: "/customerPortal/accounts" },
-  { name: "Analytics", path: "/customerPortal/analytics" },
+  // { name: "Analytics", path: "/customerPortal/analytics" },
   { name: "Cards", path: "/customerPortal/cards" },
   { name: "Payments", path: "/customerPortal/payments" },
   { name: "Transactions", path: "/customerPortal/transactions" },
-  { name: "Transfer", path: "/customerPortal/transfer" },
+  // { name: "Transfer", path: "/customerPortal/transfer" },
 ]
 
 export function Navbar() {

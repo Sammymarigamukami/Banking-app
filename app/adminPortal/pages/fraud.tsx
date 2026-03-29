@@ -26,9 +26,9 @@ export default function FraudPage() {
 
         {/* Dashboard Stats */}
         <FraudDashboard
-          highRiskCount={highRiskAlerts.length}
+          highRiskCount={highRiskAlerts.length || 0}
           flaggedAccounts={alerts.length}
-          blockedTransfers={3}
+          blockedTransfers={0}
         />
 
         {/* High Risk Alerts */}

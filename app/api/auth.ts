@@ -180,7 +180,7 @@ export function useEmployeeAuth() {
       if (!token || !isStaff || Date.now() > Number(expiry)) {
         console.warn("Unauthorized access attempt or session expired.");
         localStorage.clear();
-        navigate("/AdminLogin"); // Direct redirect to Admin portal login
+        navigate("/EmployeeLogin"); // Direct redirect to Employee portal login
         return;
       }
 
@@ -269,3 +269,95 @@ export async function depositViaPpesa(customerID: number, amount: number, phoneN
     return "Deposit failed";
   }
 }
+
+export async function getAdminDashboardStats() {
+  try {
+    const response = await apiClient.get("/admin/api/dashboard");
+
+    console.log("Admin Dashboard Stats Response:", response.data); // Log the full response for debugging
+
+    if (response.data && response.data.success) {
+      return response.data.data;
+    }
+    return null;
+  } catch (error: any) {
+    console.error("Failed to fetch admin dashboard stats:", error);
+    return null;
+  }
+}
+
+export async function getAdminAllTransactions(filters = {}) {
+  try {
+    const response = await apiClient.get("/transactions/admin/all", {
+      params: filters // Sends type, status, fromDate, etc., as query strings
+    });
+    return response.data.success ? response.data.data : [];
+  } catch (error) {
+    console.error("Failed to fetch admin transactions:", error);
+    return [];
+  }
+}
+
+
+export const updateCustomerStatus = async (customerId: string | number, status: 'active' | 'suspended' | 'closed') => {
+  try {
+    // This hits the /admin/api/customers/:id/status route we'll define next
+    const response = await apiClient.patch(`/admin/api/customers/${customerId}/status`, { 
+      status 
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update status:", error);
+    throw error;
+  }
+};
+
+
+export const getCustomerFullProfile = async (customerId: string | number, filters = {}) => {
+  try {
+    const response = await apiClient.get(`/admin/api/customers/${customerId}`, {
+      params: filters // Passes type, status, fromDate etc. to the backend
+    });
+    return response.data.success ? response.data.data : null;
+  } catch (error) {
+    console.error("Profile fetch error:", error);
+    return null;
+  }
+};
+
+export const getAllAdminCustomers = async (filters = {}) => {
+  try {
+    const response = await apiClient.get('/admin/api/customers', {
+      params: filters // Allows filtering by status, account_type, etc.
+    });
+    
+    // Following your existing pattern: return data if success is true
+    return response.data.success ? response.data.data : [];
+  } catch (error) {
+    console.error("Admin customers fetch error:", error);
+    return []; // Return empty array on error to prevent mapping crashes in UI
+  }
+};
+
+export interface ActiveAccountReport {
+  customerId: number;
+  accountNumber: string;
+  holderName: string;
+  type: 'savings' | 'current' | 'business';
+  balance: string | number;
+  status: string;
+  lastActivity: string;
+}
+
+export const getActiveAccountsReport = async () => {
+  try {
+    const response = await apiClient.get('/admin/api/reports/active-accounts');
+    
+    // Returns the array from data: [...]
+    return response.data.success ? response.data.data : [];
+  } catch (error) {
+    console.error("Active accounts report fetch error:", error);
+    return [];
+  }
+};

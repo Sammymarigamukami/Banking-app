@@ -17,6 +17,7 @@ export default [
     ]),
     route("adminPortal", "adminPortal/pages/layout.tsx", [
         index("adminPortal/pages/dashboard.tsx"),
+        route("customers/:customerId", "adminPortal/pages/customer-profile.tsx"),
         route("Settings", "adminPortal/pages/settings.tsx"),
         route("Transactions", "adminPortal/pages/transactions.tsx"),
         route("customers", "adminPortal/pages/customers.tsx"),

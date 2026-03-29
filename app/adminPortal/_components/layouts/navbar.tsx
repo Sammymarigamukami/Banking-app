@@ -14,7 +14,7 @@ const navLinks = [
   { name: "Customers", path: "/adminPortal/customers" },
   { name: "Accounts", path: "/adminPortal/accounts" },
   { name: "Transactions", path: "/adminPortal/transactions" },
-  { name: "Approvals", path: "/adminPortal/approvals" },
+  // { name: "Approvals", path: "/adminPortal/approvals" },
   { name: "Loans", path: "/adminPortal/loans" },
   { name: "Fraud Detection", path: "/adminPortal/fraud" },
   { name: "Reports", path: "/adminPortal/reports" },

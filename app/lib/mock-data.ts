@@ -122,3 +122,149 @@ export const monthlyStats = {
   income: 6450.0,
   expenses: 2340.78,
 }
+
+
+// Mock customer and transaction data
+export interface Customer {
+  id: string;
+  name: string;
+  customerId: string;
+  accountNumber: string;
+  joinedDate: string;
+  status: 'active' | 'suspended';
+  email: string;
+  phone: string;
+  totalBalance: number;
+  totalDeposits: number;
+  totalWithdrawals: number;
+  transactionCount: number;
+  linkedAccounts?: LinkedAccount[];
+}
+
+export interface LinkedAccount {
+  id: string;
+  accountNumber: string;
+  accountType: string;
+  balance: number;
+}
+
+export interface Transaction {
+  id: string;
+  date: string;
+  type: 'deposit' | 'withdrawal' | 'transfer' | 'm-pesa';
+  description: string;
+  amount: number;
+  status: 'completed' | 'pending' | 'failed';
+}
+
+export const mockCustomer: Customer = {
+  id: '12345',
+  name: 'Robert Johnson',
+  customerId: 'CUST-2023-001',
+  accountNumber: '1234567890',
+  joinedDate: '2020-03-15',
+  status: 'active',
+  email: 'robert.johnson@example.com',
+  phone: '+254712345678',
+  totalBalance: 450000,
+  totalDeposits: 1250000,
+  totalWithdrawals: 800000,
+  transactionCount: 156,
+  linkedAccounts: [
+    {
+      id: 'acc-1',
+      accountNumber: '0987654321',
+      accountType: 'Savings',
+      balance: 250000,
+    },
+    {
+      id: 'acc-2',
+      accountNumber: '1111222233',
+      accountType: 'Business',
+      balance: 750000,
+    },
+  ],
+};
+
+export const mockTransactions: Transaction[] = [
+  {
+    id: '1',
+    date: '2024-03-28',
+    type: 'm-pesa',
+    description: 'M-Pesa: 254712345678',
+    amount: 50000,
+    status: 'completed',
+  },
+  {
+    id: '2',
+    date: '2024-03-27',
+    type: 'withdrawal',
+    description: 'ATM Withdrawal - Nairobi Branch',
+    amount: -25000,
+    status: 'completed',
+  },
+  {
+    id: '3',
+    date: '2024-03-26',
+    type: 'deposit',
+    description: 'Salary Deposit - Monthly',
+    amount: 150000,
+    status: 'completed',
+  },
+  {
+    id: '4',
+    date: '2024-03-25',
+    type: 'transfer',
+    description: 'Transfer to Jane Smith - Account 0987654321',
+    amount: -75000,
+    status: 'completed',
+  },
+  {
+    id: '5',
+    date: '2024-03-24',
+    type: 'm-pesa',
+    description: 'M-Pesa: 254798765432',
+    amount: 30000,
+    status: 'completed',
+  },
+  {
+    id: '6',
+    date: '2024-03-23',
+    type: 'withdrawal',
+    description: 'ATM Withdrawal - Westgate Branch',
+    amount: -40000,
+    status: 'pending',
+  },
+  {
+    id: '7',
+    date: '2024-03-22',
+    type: 'deposit',
+    description: 'Check Deposit',
+    amount: 100000,
+    status: 'completed',
+  },
+  {
+    id: '8',
+    date: '2024-03-21',
+    type: 'transfer',
+    description: 'Transfer from Michael Brown - Account 5555666677',
+    amount: 120000,
+    status: 'failed',
+  },
+  {
+    id: '9',
+    date: '2024-03-20',
+    type: 'withdrawal',
+    description: 'Bill Payment - Electricity',
+    amount: -15000,
+    status: 'completed',
+  },
+  {
+    id: '10',
+    date: '2024-03-19',
+    type: 'm-pesa',
+    description: 'M-Pesa: 254723456789',
+    amount: 25000,
+    status: 'completed',
+  },
+];
