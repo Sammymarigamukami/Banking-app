@@ -18,8 +18,8 @@ import { useSendMoney } from '../context/sendMoneyContext';
 
 export function SendMoney() {
   const {
-    showFormModal,
-    setShowFormModal,
+    showSendFormModal,
+    setShowSendFormModal,
     showProcessingModal,
     transactionStatus,
     startTransaction,
@@ -75,14 +75,14 @@ export function SendMoney() {
   };
 
   const handleCancelForm = () => {
-    setShowFormModal(false);
+    setShowSendFormModal(false);
     resetForm();
   };
 
   return (
     <>
       {/* ---------------- FORM MODAL ---------------- */}
-      <Dialog open={showFormModal} onOpenChange={setShowFormModal}>
+      <Dialog open={showSendFormModal} onOpenChange={setShowSendFormModal}>
         <DialogContent className="sm:max-w-[400px] max-w-[90vw]">
           <DialogHeader>
             <DialogTitle>Send Money</DialogTitle>

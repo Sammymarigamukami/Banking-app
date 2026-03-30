@@ -20,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from '~/components/ui/dropdown-menu'
 import { MoreHorizontal, Eye, Lock, Key, Trash2 } from 'lucide-react'
+import { Link } from 'react-router'
 
 // Using the structure from your actual API response
 interface Customer {
@@ -107,10 +108,15 @@ export function CustomerTable({ customers }: CustomerTableProps) {
                       <DropdownMenuContent align="end" className="w-48">
                         <DropdownMenuLabel>Customer Management</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="cursor-pointer gap-2">
+                       <DropdownMenuItem asChild>
+                        <Link 
+                          to={`/admin/customers/${customer.customerId}`}
+                          className="flex items-center gap-2 cursor-pointer w-full"
+                        >
                           <Eye className="w-4 h-4 text-slate-500" />
                           View Full Profile
-                        </DropdownMenuItem>
+                        </Link>
+                      </DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer gap-2">
                           <Lock className="w-4 h-4 text-slate-500" />
                           {customer.accountStatus === 'active' ? 'Freeze Account' : 'Unfreeze Account'}

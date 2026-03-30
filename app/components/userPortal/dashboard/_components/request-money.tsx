@@ -17,8 +17,8 @@ import { useRequestMoney } from '../context/requestContext';
 
 export function RequestMoney() {
   const {
-    showFormModal,
-    setShowFormModal,
+    showRequestFormModal,
+    setShowRequestFormModal,
     showProcessingModal,
     transactionStatus,
     startTransaction,
@@ -83,14 +83,14 @@ export function RequestMoney() {
   };
 
   const handleCancelForm = () => {
-    setShowFormModal(false);
+    setShowRequestFormModal(false);
     resetForm();
   };
 
   return (
     <>
       {/* ---------------- FORM MODAL ---------------- */}
-      <Dialog open={showFormModal} onOpenChange={setShowFormModal}>
+      <Dialog open={showRequestFormModal} onOpenChange={setShowRequestFormModal}>
         <DialogContent className="sm:max-w-[400px] max-w-[90vw]">
           <DialogHeader>
             <DialogTitle>Request Money</DialogTitle>

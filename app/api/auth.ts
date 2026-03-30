@@ -222,12 +222,14 @@ export interface Transaction {
   status: string;
 }
 
-export async function getCustomerTransactions(customer_id: string): Promise<Transaction[]> {
+export async function getCustomerTransactions(accountId: string | number): Promise<Transaction[]> {
   try {
-    const response = await apiClient.get("/transactions/customer", {
-      params: { customer_id } // sends as query parameter
-    });
-    return response.data; 
+    // Inject the accountId directly into the path to match your URL structure
+    const response = await apiClient.get(`/transactions/customer/${accountId}`);
+    
+    // Most Express/Node backends return the data inside a 'success' or 'data' property
+    // Adjust based on your specific backend response structure
+    return response.data.success ? response.data.data : response.data; 
   } catch (error: any) {
     console.error("Failed to fetch transactions:", error);
     return [];
@@ -359,5 +361,52 @@ export const getActiveAccountsReport = async () => {
   } catch (error) {
     console.error("Active accounts report fetch error:", error);
     return [];
+  }
+};
+
+
+// --- INTERFACES ---
+
+export interface DepositPayload {
+  phone: string;
+  amount: string | number;
+  accountId: string | number;
+}
+
+export interface DepositResponse {
+  success: boolean;
+  message?: string;
+  CheckoutRequestID?: string; // Standard Daraja API response key
+  CustomerMessage?: string;
+}
+
+
+/**
+ * Initiates an M-Pesa STK Push deposit.
+ * @param data - The phone, amount, and accountId
+ */
+export const initiateDeposit = async (data: DepositPayload): Promise<DepositResponse | null> => {
+  try {
+    const response = await apiClient.post('/user/api/deposit', data);
+    
+    // We return the whole data object so the UI can access CheckoutRequestID
+    return response.data;
+  } catch (error) {
+    console.error("M-Pesa deposit initiation error:", error);
+    return null;
+  }
+};
+
+/**
+ * Checks the status of a specific M-Pesa transaction.
+ * @param checkoutRequestId - The ID returned from the initiation call
+ */
+export const getMpesaStatus = async (checkoutRequestId: string) => {
+  try {
+    const response = await apiClient.get(`/user/api/deposit/status/${checkoutRequestId}`);
+    return response.data;
+  } catch (error) {
+    console.error("M-Pesa status check error:", error);
+    return { success: false, status: 'FAILED' };
   }
 };

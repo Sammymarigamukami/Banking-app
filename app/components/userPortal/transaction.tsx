@@ -21,7 +21,7 @@ export default function TransactionsPage() {
 
     const fetchTransactions = async () => {
       setLoading(true);
-      const data = await getCustomerTransactions(user.id);
+      const data = await getCustomerTransactions(user.accountId);
       setTransactions(data);
       setLoading(false);
     };

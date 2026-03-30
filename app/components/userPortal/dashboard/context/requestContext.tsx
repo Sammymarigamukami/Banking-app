@@ -5,8 +5,8 @@ import { createContext, useContext, useState, useEffect } from 'react';
 type TransactionStatus = 'idle' | 'pending' | 'success' | 'failed';
 
 interface RequestMoneyContextType {
-  showFormModal: boolean;
-  setShowFormModal: (v: boolean) => void;
+  showRequestFormModal: boolean;
+  setShowRequestFormModal: (v: boolean) => void;
 
   showProcessingModal: boolean;
   setShowProcessingModal: (v: boolean) => void;
@@ -26,7 +26,7 @@ interface RequestMoneyContextType {
 const RequestMoneyContext = createContext<RequestMoneyContextType | null>(null);
 
 export function RequestMoneyProvider({ children }: { children: React.ReactNode }) {
-  const [showFormModal, setShowFormModal] = useState(false);
+  const [showRequestFormModal, setShowRequestFormModal] = useState(false);
   const [showProcessingModal, setShowProcessingModal] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>('idle');
 
@@ -43,7 +43,7 @@ export function RequestMoneyProvider({ children }: { children: React.ReactNode }
   }, [transactionStatus]);
 
   const startTransaction = () => {
-    setShowFormModal(false);
+    setShowRequestFormModal(false);
     setShowProcessingModal(true);
     setTransactionStatus('pending');
   };
@@ -56,8 +56,8 @@ export function RequestMoneyProvider({ children }: { children: React.ReactNode }
   return (
     <RequestMoneyContext.Provider
       value={{
-        showFormModal,
-        setShowFormModal,
+        showRequestFormModal,
+        setShowRequestFormModal,
         showProcessingModal,
         setShowProcessingModal,
         transactionStatus,

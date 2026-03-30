@@ -6,10 +6,14 @@ import { Send, Download, Receipt, Landmark } from "lucide-react"
 import { Link } from "react-router"
 import { useDeposit } from "./context/depositContext"
 import { useRequestMoney } from "./context/requestContext"
+import { useSendMoney } from "./context/sendMoneyContext"
+import { usePaybill } from "./context/paybillContext"
 
 export function QuickActions() {
-  const { setShowFormModal } = useRequestMoney();
+  const {setShowSendFormModal } = useSendMoney()
   const { setShowDepositModal } = useDeposit();
+  const { setShowRequestFormModal } = useRequestMoney();
+  const { setShowFormModalPaybill } = usePaybill(); // For Pay Bills, we can reuse the request money form modal state
   return (
     <Card>
       <CardHeader className="pb-2">
@@ -21,7 +25,7 @@ export function QuickActions() {
         <div className="grid grid-cols-2 gap-2">
 
           <Button
-          onClick={() => setShowFormModal(true)}
+          onClick={() => setShowSendFormModal(true)}
             variant="outline"
             className="h-auto flex-col gap-2 py-4 hover:bg-primary hover:text-primary-foreground"
             asChild
@@ -33,7 +37,7 @@ export function QuickActions() {
           </Button>
 
           <Button
-           onClick={() => setShowFormModal(true)}
+           onClick={() => setShowRequestFormModal(true)}
             variant="outline"
             className="h-auto flex-col gap-2 py-4 hover:bg-primary hover:text-primary-foreground"
             asChild
@@ -45,7 +49,7 @@ export function QuickActions() {
           </Button>
 
           <Button
-            onClick={() => setShowFormModal(true)}
+            onClick={() => setShowFormModalPaybill(true)}
             variant="outline"
             className="h-auto flex-col gap-2 py-4 hover:bg-primary hover:text-primary-foreground"
             asChild

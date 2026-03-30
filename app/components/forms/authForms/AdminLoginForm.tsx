@@ -49,7 +49,7 @@ export default function AdminLoginForm() {
   }
 
   return (
-    <Card className="w-[380px] bg-muted/30 text-gray-100 shadow-lg border-blue-900/20">
+    <Card className="w-[380px] bg-muted/30 text-gray-100 shadow-lg">
       <CardHeader>
         <CardTitle className="text-center text-gray-100">
           Admin & Staff Login
@@ -59,34 +59,32 @@ export default function AdminLoginForm() {
       <CardContent>
         <form onSubmit={handleLogin} className="space-y-4">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/50 p-2 rounded">
-                <p className="text-red-400 text-xs text-center">{error}</p>
-            </div>
+            <p className="text-red-400 text-sm text-center">{error}</p>
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="admin-username">Employee ID / Username</Label>
+            <Label htmlFor="customer-username" className="text-gray-900">Username</Label>
             <Input
-              id="admin-username"
+              id="customer-username"
               type="text"
-              placeholder="e.g. 9CSVGZX4"
+              placeholder="Enter your username"
               value={userName}
               onChange={(e) => setUserName(e.target.value)}
               required
-              className="text-white bg-muted/30 border-gray-600 placeholder:text-gray-500"
+              className="text-gray-900 bg-muted/30 border-gray-600 placeholder:text-gray-400"
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="admin-password">Password</Label>
+            <Label htmlFor="customer-password" className="text-gray-900">Password</Label>
             <Input
-              id="admin-password"
+              id="customer-password"
               type="password"
               placeholder="********"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="text-white bg-muted/30 border-gray-600 placeholder:text-gray-500"
+              className="text-gray-900 bg-muted/30 border-gray-600 placeholder:text-gray-400"
             />
           </div>
 
@@ -94,9 +92,9 @@ export default function AdminLoginForm() {
             variant="default"
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-700 hover:bg-blue-600 transition-colors"
+            className="w-full"
           >
-            {loading ? "Authenticating..." : "Secure Login"}
+            {loading ? "Logging in..." : "Login"}
           </Button>
           
           <div className="pt-2 text-center">

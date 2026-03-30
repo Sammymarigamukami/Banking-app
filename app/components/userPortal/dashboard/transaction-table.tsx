@@ -4,6 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~
 import { cn } from "~/lib/utils";
 import { getCustomerTransactions, useAuthRedirect, type Transaction } from "~/api/auth";
 import { useState, useEffect } from "react";
+import { Link } from "react-router";
 
 export function TransactionTable({ className }: { className?: string }) {
   const user = useAuthRedirect();
@@ -18,7 +19,7 @@ export function TransactionTable({ className }: { className?: string }) {
 
     const fetchTransactions = async () => {
       setLoading(true);
-      const data = await getCustomerTransactions(user.id); // fetch last 5 transactions
+      const data = await getCustomerTransactions(user.accountId); // fetch last 5 transactions
       setTransactions(data.slice(0, 5));
       setLoading(false);
     };
@@ -32,12 +33,12 @@ export function TransactionTable({ className }: { className?: string }) {
         <CardTitle className="text-sm font-medium text-muted-foreground">
           Recent Transactions
         </CardTitle>
-        <a
-          href="/dashboard/transactions"
+        <Link
+          to="/customerPortal/transactions"
           className="text-xs text-primary hover:underline"
         >
           View all
-        </a>
+        </Link>
       </CardHeader>
 
       <CardContent className="px-0">
