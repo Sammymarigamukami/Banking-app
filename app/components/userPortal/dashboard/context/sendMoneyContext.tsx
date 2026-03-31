@@ -1,24 +1,20 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState } from 'react';
+import { transferMoney, type TransferPayload } from '~/api/auth';
+
 
 export type TransactionStatus = 'idle' | 'pending' | 'success' | 'failed';
 
 interface SendMoneyContextType {
   showSendFormModal: boolean;
   setShowSendFormModal: (v: boolean) => void;
-
   showProcessingModal: boolean;
   setShowProcessingModal: (v: boolean) => void;
-
   transactionStatus: TransactionStatus;
   setTransactionStatus: (v: TransactionStatus) => void;
-
-  startTransaction: (data: {
-    accountNumber: string;
-    amount: string;
-  }) => void;
-
+  // Updated signature to include description
+  startTransaction: (data: TransferPayload) => Promise<void>;
   cancelTransaction: () => void;
 }
 
@@ -29,22 +25,27 @@ export function SendMoneyProvider({ children }: { children: React.ReactNode }) {
   const [showProcessingModal, setShowProcessingModal] = useState(false);
   const [transactionStatus, setTransactionStatus] = useState<TransactionStatus>('idle');
 
-  // Simulated processing (replace later with real backend)
-  useEffect(() => {
-    if (transactionStatus !== 'pending') return;
-
-    const timer = setTimeout(() => {
-      const success = Math.random() < 0.75;
-      setTransactionStatus(success ? 'success' : 'failed');
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [transactionStatus]);
-
-  const startTransaction = () => {
+  // --- START TRANSACTION (Now Async) ---
+  const startTransaction = async (data: TransferPayload) => {
+    // 1. Prepare UI
     setShowSendFormModal(false);
     setShowProcessingModal(true);
     setTransactionStatus('pending');
+
+    try {
+      // 2. Call the real API
+      const result = await transferMoney(data);
+
+      // 3. Handle Result
+      if (result && result.success) {
+        setTransactionStatus('success');
+      } else {
+        setTransactionStatus('failed');
+      }
+    } catch (error) {
+      console.error("Context Transfer Error:", error);
+      setTransactionStatus('failed');
+    }
   };
 
   const cancelTransaction = () => {

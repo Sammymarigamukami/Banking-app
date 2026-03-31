@@ -15,19 +15,19 @@ import { Field, FieldLabel } from '~/components/ui/field';
 import { ProcessingModal } from './processing-modal';
 import { useSendMoney } from '../context/sendMoneyContext';
 
-
 export function SendMoney() {
   const {
     showSendFormModal,
     setShowSendFormModal,
     showProcessingModal,
     transactionStatus,
-    startTransaction,
+    startTransaction, 
     cancelTransaction,
   } = useSendMoney();
 
   const [accountNumber, setAccountNumber] = useState('');
   const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   // ---------------- VALIDATION ----------------
@@ -48,19 +48,22 @@ export function SendMoney() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // ---------------- ACTION ----------------
+
   const handleSendMoney = () => {
     if (!validateForm()) return;
 
+    // We pass the data in the format your API expects
     startTransaction({
-      accountNumber,
-      amount,
+      receiverAccountId: accountNumber, // Maps to your API payload
+      amount: Number(amount),           // Converts string to number
+      description: description || "No description provided",
     });
   };
 
   const resetForm = () => {
     setAccountNumber('');
     setAmount('');
+    setDescription('');
     setErrors({});
   };
 
@@ -133,6 +136,17 @@ export function SendMoney() {
                   {errors.amount}
                 </p>
               )}
+            </Field>
+
+            <Field>
+              <FieldLabel htmlFor="description">Description note</FieldLabel>
+              <Input
+                id="description"
+                type="text"
+                placeholder="What is this for?"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </Field>
           </div>
 

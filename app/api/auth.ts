@@ -410,3 +410,151 @@ export const getMpesaStatus = async (checkoutRequestId: string) => {
     return { success: false, status: 'FAILED' };
   }
 };
+
+export interface TransferPayload {
+  receiverAccountId: string;
+  amount: number;
+  description: string;
+}
+
+export interface TransferResponse {
+  success: boolean;
+  message: string;
+  data: {
+    referenceCode: string;
+    amount: number;
+    recipientAccountId: string;
+    timestamp: string;
+  };
+}
+
+/**
+ * Initiates an internal account-to-account transfer.
+ * @param data - The receiver ID, amount, and description note
+ */
+export const transferMoney = async (data: TransferPayload): Promise<TransferResponse | null> => {
+  try {
+    const response = await apiClient.post('/user/api/accounts/transfer/account', data);
+    
+    // Returns the success message and transaction data (referenceCode, etc.)
+    return response.data;
+  } catch (error) {
+    console.error("Account transfer error:", error);
+    // Returning null or throwing error depending on how your UI handles failures
+    return null; 
+  }
+};
+
+
+export interface CreateCardPayload {
+  card_type: 'debit' | 'credit';
+}
+
+export interface CreateCardResponse {
+  success: boolean;
+  message: string;
+  data: {
+    card_id: number;
+    account_id: number;
+    card_number: string;
+    card_type: string;
+    expiry_date: string;
+  };
+}
+
+
+export const issueNewCard = async (data: CreateCardPayload): Promise<CreateCardResponse | null> => {
+  try {
+    const response = await apiClient.post('/user/api/accounts/card/createCard', data);
+    
+    // Returns the success message and card details (number, expiry, etc.)
+    return response.data;
+  } catch (error: any) {
+    console.error("Card issuance error:", error.response?.data || error.message);
+    return null;
+  }
+};
+
+
+export interface CardDetailsResponse {
+  success: boolean;
+  data: {
+    card_id: number;
+    account_id: number;
+    card_number: string;
+    card_type: string;
+    expiry_date: string;
+    status: 'active' | 'frozen' | 'blocked';
+  };
+}
+
+export const getCardDetails = async (cardId: string | number): Promise<CardDetailsResponse | null> => {
+  try {
+    // We use a template literal to inject the cardId into the URL path
+    const response = await apiClient.get(`/user/api/accounts/getCardDetails/${cardId}`);
+    
+    return response.data;
+  } catch (error: any) {
+    console.error("Fetch card details error:", error.response?.data || error.message);
+    return null;
+  }
+};
+
+
+export interface CardActionPayload {
+  card_id: string | number;
+}
+
+export interface FreezeCardResponse {
+  success: boolean;
+  message: string;
+  status?: 'blocked'; // Only present on success
+}
+
+
+export const freezeCard = async (cardId: string | number): Promise<FreezeCardResponse | null> => {
+  try {
+    const response = await apiClient.post('/user/api/accounts/card/freeze', {
+      card_id: cardId.toString(),
+    });
+    
+    return response.data;
+  } catch (error: any) {
+
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    
+    console.error("Freeze card error:", error.message);
+    return null;
+  }
+};
+
+export interface UnfreezeCardResponse {
+  success: boolean;
+  message: string;
+  status?: 'active'; // Present on success
+}
+
+/**
+ * Unfreezes a previously frozen card to re-enable transactions.
+ * Endpoint: POST http://localhost:8000/user/api/accounts/card/unfreeze
+ * @param cardId - The unique ID of the card to unfreeze
+ */
+export const unfreezeCard = async (cardId: string | number): Promise<UnfreezeCardResponse | null> => {
+  try {
+    const response = await apiClient.post('/user/api/accounts/card/unfreeze', {
+      card_id: cardId.toString(),
+    });
+    
+    return response.data;
+  } catch (error: any) {
+    // Check if backend returned a structured error message
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    
+    console.error("Unfreeze card error:", error.message);
+    return null;
+  }
+};
