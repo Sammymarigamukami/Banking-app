@@ -1,34 +1,67 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Snowflake, Eye, Lock, Settings, Plus, Loader2 } from "lucide-react"
+import { Snowflake, Eye, Lock, Trash2, Plus, Loader2 } from "lucide-react"
 import { Button } from "../ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
 import { Badge } from "../ui/badge"
 import { toast } from "sonner"
-// Import the functions we defined in auth.ts
-import { getCardDetails, issueNewCard, freezeCard, unfreezeCard } from "~/api/auth"
+// Import Dialog components for the modal
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog"
+
+import { 
+  getAllCustomerCards, 
+  issueNewCard, 
+  freezeCard, 
+  unfreezeCard, 
+  deleteCard 
+} from "~/api/auth"
 
 export default function CardsPage() {
   const [cards, setCards] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState<string | null>(null)
+  
+  // Modal States
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedCard, setSelectedCard] = useState<any | null>(null)
 
-  // --- 1. Load Initial Card Data ---
+  // --- 1. Security: Masking Functions ---
+  const maskCardNumber = (num: string) => {
+    if (!num) return "**** **** **** ****"
+    // Shows only the last 4 digits
+    return `**** **** **** ${num.slice(-4)}`
+  }
+
+  const maskText = (text: string) => {
+    if (!text) return "****"
+    // Shows first character and masks the rest
+    return `${text[0]}*** ***`
+  }
+
+  const maskExpiry = () => "**/**"
+
+  // --- 2. Load All Customer Cards ---
   useEffect(() => {
-    const fetchInitialData = async () => {
+    const fetchCards = async () => {
       setLoading(true)
-      // Fetching card ID 1 as an example to start with
-      const result = await getCardDetails(1)
+      const result = await getAllCustomerCards()
       if (result?.success) {
-        setCards([result.data])
+        setCards(result.data)
+      } else {
+        toast.error("Failed to load your cards")
       }
       setLoading(false)
     }
-    fetchInitialData()
+    fetchCards()
   }, [])
 
-  // --- 2. Handle Add New Card ---
+  // --- 3. Handle Add New Card ---
   const handleAddNewCard = async () => {
     const result = await issueNewCard({ card_type: 'debit' })
     if (result?.success) {
@@ -39,29 +72,47 @@ export default function CardsPage() {
     }
   }
 
-  // --- 3. Handle Freeze/Unfreeze Toggle ---
+  // --- 4. Handle Freeze/Unfreeze Toggle ---
   const handleToggleStatus = async (cardId: string, currentStatus: string) => {
     setProcessingId(cardId)
     const isFrozen = currentStatus === "blocked" || currentStatus === "frozen"
-    
-    const result = isFrozen 
-      ? await unfreezeCard(cardId) 
-      : await freezeCard(cardId)
+    const result = isFrozen ? await unfreezeCard(cardId) : await freezeCard(cardId)
 
     if (result?.success) {
       toast.success(result.message)
-      // Update local state to reflect the new status
       setCards((prev) => prev.map(c => 
         c.card_id.toString() === cardId ? { ...c, status: result.status } : c
       ))
-    } else {
-      toast.error(result?.message || "Action failed")
     }
     setProcessingId(null)
   }
 
+  // --- 5. Handle Delete Card ---
+  const handleDeleteCard = async (cardId: string) => {
+    const confirmDelete = window.confirm("Permanently delete this card?")
+    if (!confirmDelete) return
+
+    setProcessingId(cardId)
+    const result = await deleteCard(cardId)
+    if (result?.success) {
+      toast.success(result.message)
+      setCards((prev) => prev.filter(c => c.card_id.toString() !== cardId))
+    }
+    setProcessingId(null)
+  }
+
+  // --- 6. Handle Details (Open Modal) ---
+  const handleViewDetails = (card: any) => {
+    setSelectedCard(card)
+    setIsModalOpen(true)
+  }
+
   if (loading) {
-    return <div className="flex h-64 items-center justify-center"><Loader2 className="animate-spin text-primary" /></div>
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="animate-spin text-primary h-8 w-8" />
+      </div>
+    )
   }
 
   return (
@@ -69,107 +120,107 @@ export default function CardsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">Cards</h1>
-          <p className="text-muted-foreground">
-            Manage your debit and credit cards.
-          </p>
+          <p className="text-muted-foreground text-sm">Manage your secure payment methods.</p>
         </div>
         <Button onClick={handleAddNewCard}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add New Card
+          <Plus className="mr-2 h-4 w-4" /> Add New Card
         </Button>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
         {cards.map((card) => {
-          const isBlocked = card.status === "blocked" || card.status === "frozen";
-          
+          const isBlocked = card.status === "blocked" || card.status === "frozen"
           return (
-            <Card key={card.card_id} className="overflow-hidden">
+            <Card key={card.card_id} className="overflow-hidden shadow-sm">
               <CardContent className="p-6">
-                {/* Card Design (Identical to your original) */}
-                <div
-                  className={`relative overflow-hidden rounded-xl bg-gradient-to-br ${
-                    isBlocked 
-                      ? "from-slate-600 to-slate-900 grayscale" 
-                      : "from-primary via-primary to-accent"
-                  } p-5 text-primary-foreground transition-all`}
-                >
-                  <div className="absolute -right-8 -top-8 h-32 w-32 rounded-full bg-primary-foreground/10" />
-                  <div className="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-primary-foreground/10" />
+                {/* MASKED CARD DESIGN */}
+                <div className={`relative overflow-hidden rounded-xl bg-gradient-to-br p-5 text-white transition-all duration-300 ${isBlocked ? "from-slate-600 to-slate-900 grayscale" : "from-primary via-primary to-accent"}`}>
                   <div className="relative space-y-6">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium opacity-90">NexusBank</span>
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          variant="secondary"
-                          className={`text-xs ${
-                            !isBlocked
-                              ? "bg-green-500/20 text-green-100"
-                              : "bg-amber-500/20 text-amber-100"
-                          }`}
-                        >
-                          {card.status}
-                        </Badge>
-                        <span className="text-xs uppercase opacity-75">{card.card_type}</span>
-                      </div>
+                      <span className="text-sm font-medium opacity-80">NexusBank</span>
+                      <Badge variant="secondary" className="bg-white/20 text-white border-none">{card.status}</Badge>
                     </div>
+                    
+                    {/* Hashed Number */}
                     <div className="font-mono text-lg tracking-widest">
-                      {card.card_number}
+                      {maskCardNumber(card.card_number)}
                     </div>
+
                     <div className="flex items-end justify-between">
                       <div>
-                        <p className="text-[10px] uppercase opacity-75">Card Holder</p>
-                        <p className="text-sm font-medium">User</p>
+                        <p className="text-[10px] uppercase opacity-60">Card Holder</p>
+                        <p className="text-sm font-medium">{maskText("Customer Name")}</p>
                       </div>
                       <div>
-                        <p className="text-[10px] uppercase opacity-75">Expires</p>
-                        <p className="text-sm font-medium">
-                          {card.expiry_date?.split('T')[0] || "N/A"}
-                        </p>
+                        <p className="text-[10px] uppercase opacity-60">Expires</p>
+                        <p className="text-sm font-medium">{maskExpiry()}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Card Actions (Connected to APIs) */}
-                <div className="mt-4 grid grid-cols-4 gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="flex-col h-auto py-3"
-                    onClick={() => handleToggleStatus(card.card_id.toString(), card.status)}
-                    disabled={processingId === card.card_id.toString()}
-                  >
-                    {processingId === card.card_id.toString() ? (
-                      <Loader2 className="h-4 w-4 animate-spin mb-1" />
-                    ) : (
-                      <Snowflake className={`h-4 w-4 mb-1 ${isBlocked ? "text-blue-400" : ""}`} />
-                    )}
-                    <span className="text-xs">{isBlocked ? "Unfreeze" : "Freeze"}</span>
+                {/* ACTIONS */}
+                <div className="mt-4 grid grid-cols-3 gap-2">
+                  <Button variant="outline" size="sm" className="flex-col h-auto py-3" onClick={() => handleToggleStatus(card.card_id.toString(), card.status)} disabled={!!processingId}>
+                    <Snowflake className={`h-4 w-4 mb-1 ${isBlocked ? "text-blue-400" : ""}`} />
+                    <span className="text-[10px]">{isBlocked ? "Unfreeze" : "Freeze"}</span>
                   </Button>
                   
-                  <Button variant="outline" size="sm" className="flex-col h-auto py-3">
+                  <Button variant="outline" size="sm" className="flex-col h-auto py-3" onClick={() => handleViewDetails(card)}>
                     <Eye className="h-4 w-4 mb-1" />
-                    <span className="text-xs">Details</span>
+                    <span className="text-[10px]">Details</span>
                   </Button>
                   
-                  <Button variant="outline" size="sm" className="flex-col h-auto py-3">
-                    <Lock className="h-4 w-4 mb-1" />
-                    <span className="text-xs">PIN</span>
-                  </Button>
-                  
-                  <Button variant="outline" size="sm" className="flex-col h-auto py-3">
-                    <Settings className="h-4 w-4 mb-1" />
-                    <span className="text-xs">Settings</span>
+                  <Button variant="outline" size="sm" className="flex-col h-auto py-3 text-red-500 hover:bg-red-50" onClick={() => handleDeleteCard(card.card_id.toString())} disabled={!!processingId}>
+                    {processingId === card.card_id.toString() ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4 mb-1" />}
+                    <span className="text-[10px]">Delete</span>
                   </Button>
                 </div>
               </CardContent>
             </Card>
-          );
+          )
         })}
       </div>
 
-      {/* Card Benefits (Unchanged) */}
+      {/* --- TRUE DATA MODAL --- */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Sensitive Card Details</DialogTitle>
+          </DialogHeader>
+          {selectedCard && (
+            <div className="space-y-4 py-4">
+              <div className="rounded-xl bg-slate-900 p-6 text-white font-mono shadow-xl">
+                <p className="text-[10px] uppercase opacity-50 mb-4 tracking-tighter">Official Card Record</p>
+                
+                {/* TRUE Card Number formatted in groups of 4 */}
+                <div className="text-xl tracking-widest mb-6">
+                  {selectedCard.card_number.replace(/\W/gi, '').replace(/(.{4})/g, '$1 ')}
+                </div>
+
+                <div className="flex justify-between items-end">
+                  <div>
+                    <p className="text-[9px] opacity-40 uppercase">Card Holder</p>
+                    <p className="text-sm">CUSTOMER NAME</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-[9px] opacity-40 uppercase">Expiry Date</p>
+                    <p className="text-sm">{selectedCard.expiry_date?.split('T')[0]}</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="p-3 bg-amber-50 border border-amber-100 rounded-lg">
+                <p className="text-xs text-amber-800 leading-tight">
+                  <strong>Warning:</strong> You are viewing unmasked sensitive data. Ensure no one is looking at your screen.
+                </p>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Benefits Section */}
       <Card>
         <CardHeader>
           <CardTitle className="text-sm font-medium text-muted-foreground">

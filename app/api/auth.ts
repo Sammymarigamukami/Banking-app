@@ -558,3 +558,55 @@ export const unfreezeCard = async (cardId: string | number): Promise<UnfreezeCar
     return null;
   }
 };
+
+export interface Card {
+  card_id: number;
+  account_id: number;
+  card_number: string;
+  card_type: string;
+  expiry_date: string;
+  status: 'active' | 'frozen' | 'blocked';
+  account_number: string;
+}
+
+export interface AllCardsResponse {
+  success: boolean;
+  data: Card[];
+}
+
+/**
+ * Fetches all cards associated with the authenticated customer.
+ * Endpoint: GET http://localhost:8000/user/api/accounts/card/customer/all
+ */
+export const getAllCustomerCards = async (): Promise<AllCardsResponse | null> => {
+  try {
+    const response = await apiClient.get('/user/api/accounts/card/customer/all');
+    
+    return response.data;
+  } catch (error: any) {
+    console.error("Fetch all cards error:", error.response?.data || error.message);
+    return null;
+  }
+};
+
+export interface DeleteCardResponse {
+  success: boolean;
+  message: string;
+}
+
+
+/**
+ * Permanently removes a card from the system.
+ * Endpoint: POST http://localhost:8000/user/api/accounts/card/delete/:card_id
+ * @param cardId - The unique ID of the card to delete
+ */
+export const deleteCard = async (cardId: string | number): Promise<DeleteCardResponse | null> => {
+  try {
+    const response = await apiClient.delete(`/user/api/accounts/card/delete/${cardId}`);
+    
+    return response.data;
+  } catch (error: any) {
+    console.error("Delete card error:", error.response?.data || error.message);
+    return null;
+  }
+};
