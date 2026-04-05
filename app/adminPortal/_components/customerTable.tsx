@@ -110,7 +110,7 @@ export function CustomerTable({ customers }: CustomerTableProps) {
                         <DropdownMenuSeparator />
                        <DropdownMenuItem asChild>
                         <Link 
-                          to={`/admin/customers/${customer.customerId}`}
+                          to={`/adminPortal/customers/${customer.customerId}`}
                           className="flex items-center gap-2 cursor-pointer w-full"
                         >
                           <Eye className="w-4 h-4 text-slate-500" />

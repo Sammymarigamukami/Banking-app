@@ -64,6 +64,9 @@ export function Navbar() {
 
         {/* Desktop CTA Buttons */}
         <div className="hidden items-center gap-3 md:flex">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/EmployeeLogin")}>
+            Employee Login
+          </Button>
           <Button variant="ghost" size="sm" onClick={() => navigate("/CustomerLogin")}>
             Customer Login
           </Button>
@@ -115,6 +118,11 @@ export function Navbar() {
               Contact
             </Link>
             <div className="flex flex-col gap-2 pt-4">
+              <Button 
+              onClick={() => navigate("/EmployeeLogin")}
+              variant="outline" className="w-full">
+                Employee Login
+              </Button>
               <Button 
               onClick={() => navigate("/CustomerLogin")}
               variant="outline" className="w-full">

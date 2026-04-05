@@ -14,6 +14,8 @@ import {
 import { Field, FieldLabel } from '~/components/ui/field';
 import { ProcessingModal } from './processing-modal';
 import { useRequestMoney } from '../context/requestContext';
+import { CreditCard } from 'lucide-react';
+import { useAuthRedirect } from '~/api/auth';
 
 export function RequestMoney() {
   const {
@@ -29,8 +31,9 @@ export function RequestMoney() {
   const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const customer = useAuthRedirect();
 
-  // ---------------- VALIDATION ----------------
+
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -153,6 +156,18 @@ export function RequestMoney() {
               />
             </Field>
           </div>
+              <div className="rounded-lg bg-primary/5 p-3 flex items-center justify-between border border-primary/10">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary" />
+                <span className="text-xs font-medium text-muted-foreground">Source: Wallet Balance</span>
+              </div>
+              <span className="text-xs font-bold">Ksh {
+                customer?.accounts?.current?.[0]?.balance?.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }) ?? "0.00"
+              }</span>
+            </div>
 
           <DialogFooter className="gap-2">
             <Button

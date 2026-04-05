@@ -19,8 +19,9 @@ export function TransactionTable({ className }: { className?: string }) {
 
     const fetchTransactions = async () => {
       setLoading(true);
-      const data = await getCustomerTransactions(user.accountId); // fetch last 5 transactions
+      const data = await getCustomerTransactions(user.id); // fetch last 5 transactions
       setTransactions(data.slice(0, 5));
+      console.log("Fetched transactions:", data);
       setLoading(false);
     };
 
@@ -71,7 +72,7 @@ export function TransactionTable({ className }: { className?: string }) {
                   <TableCell className="font-medium">{transaction.description || "-"}</TableCell>
                   <TableCell className="hidden sm:table-cell">
                     <Badge variant="secondary" className="font-normal">
-                      {transaction.transaction_type}
+                      {transaction.type}
                     </Badge>
                   </TableCell>
                   <TableCell

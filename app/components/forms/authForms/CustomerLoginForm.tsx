@@ -49,7 +49,7 @@ export default function CustomerLoginForm() {
   return (
     <Card className="w-[380px] bg-muted/30 text-gray-100 shadow-lg">
       <CardHeader>
-        <CardTitle className="text-center text-gray-100">
+        <CardTitle className="text-center text-gray-700">
           Customer Login
         </CardTitle>
       </CardHeader>

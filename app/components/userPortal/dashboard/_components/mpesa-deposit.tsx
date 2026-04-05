@@ -31,8 +31,7 @@ import {
 import { useAuthRedirect } from '~/api/auth';
 
 const PAYMENT_METHODS = [
-  { id: 'mpesa', name: 'MPesa', enabled: true, icon: Smartphone },
-  { id: 'paypal', name: 'PayPal', enabled: false, icon: CreditCard },
+  { id: 'mpesa', name: 'MPesa', enabled: true, icon: Smartphone }
 ];
 
 export function DepositUI() {
@@ -152,7 +151,7 @@ export function DepositUI() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-6 py-4">
+          <div className="grid gap-3 py-3">
             {/* Amount Input */}
             <div className="space-y-2">
               <Label htmlFor="amount" className="text-sm font-medium">Amount (KES)</Label>
@@ -207,6 +206,18 @@ export function DepositUI() {
                   </div>
                 ))}
               </RadioGroup>
+            </div>
+              <div className="rounded-lg bg-primary/5 p-3 flex items-center justify-between border border-primary/10">
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary" />
+                <span className="text-xs font-medium text-muted-foreground">Source: Wallet Balance</span>
+              </div>
+              <span className="text-xs font-bold">Ksh {
+                customer?.accounts?.current?.[0]?.balance?.toLocaleString(undefined, {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                }) ?? "0.00"
+              }</span>
             </div>
 
             {error && (

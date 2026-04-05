@@ -2,12 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 import { TrendingUp, TrendingDown } from "lucide-react";
 import { cn } from "~/lib/utils";
 import { useState, useEffect } from "react";
-import { getCurrentAccount, useAuthRedirect, type Account } from "~/api/auth";
+import { getAllCategorizedAccounts, useAuthRedirect, type Account, type CategorizedAccounts } from "~/api/auth";
 
 
 export function BalanceCard({ className }: { className?: string }) {
   const user = useAuthRedirect();
-  const [currentAccount, setCurrentAccount] = useState<Account | null>(null);
+  const [currentAccount, setCurrentAccount] = useState<CategorizedAccounts | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Optional: monthly stats placeholder
@@ -21,8 +21,9 @@ export function BalanceCard({ className }: { className?: string }) {
 
     const fetchAccount = async () => {
       setLoading(true);
-      const account = await getCurrentAccount(parseInt(user.id));
-      setCurrentAccount(account);
+      const categorizedAccountsData = await getAllCategorizedAccounts(user.id);
+      console.log("Fetched categorized accounts:", categorizedAccountsData);
+      setCurrentAccount(categorizedAccountsData.accounts?.current?.[0] || null);
       setMonthlyStats({ income: 0, expenses: 0 }); // replace with real API later if needed
       setLoading(false);
     };
@@ -52,7 +53,7 @@ export function BalanceCard({ className }: { className?: string }) {
           <>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl font-bold text-foreground">
-                Ksh{currentAccount.balance.toLocaleString("en-US", { minimumFractionDigits: 2 })}
+                Ksh{currentAccount.balance}
               </span>
               <span className="text-sm text-muted-foreground">KSH</span>
             </div>

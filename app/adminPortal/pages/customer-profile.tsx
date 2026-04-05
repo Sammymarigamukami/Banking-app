@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
-import { useParams } from 'react-router';
+import { Link, useParams } from 'react-router';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -141,17 +141,19 @@ export default function CustomerProfilePage() {
         {/* Breadcrumb Navigation */}
         <Breadcrumb className="mb-6">
           <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/admin" className="text-slate-600 hover:text-slate-900">
-                Admin
-              </BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="text-slate-400" />
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/admin/customers" className="text-slate-600 hover:text-slate-900">
-                Customers
-              </BreadcrumbLink>
-            </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild className="text-slate-600 hover:text-slate-900">
+              <Link to="/adminPortal">Admin</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+
+          <BreadcrumbSeparator className="text-slate-400" />
+
+          <BreadcrumbItem>
+            <BreadcrumbLink asChild className="text-slate-600 hover:text-slate-900">
+              <Link to="/adminPortal/customers">Customers</Link>
+            </BreadcrumbLink>
+          </BreadcrumbItem>
             <BreadcrumbSeparator className="text-slate-400" />
             <BreadcrumbItem>
               <BreadcrumbPage className="text-slate-900 capitalize">{profile.name}</BreadcrumbPage>

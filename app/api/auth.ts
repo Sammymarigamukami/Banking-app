@@ -136,7 +136,6 @@ export function useAuthRedirect() {
 
       if (!token || role !== "customer" || Date.now() > Number(expiry)) {
         localStorage.clear();
-        navigate("/CustomerLogin"); 
         return;
       }
 
@@ -217,15 +216,15 @@ export function useEmployeeAuth() {
 export interface Transaction {
   date: string;
   description: string | null;
-  transaction_type: string;
+  type: string;
   amount: string;
   status: string;
 }
 
-export async function getCustomerTransactions(accountId: string | number): Promise<Transaction[]> {
+export async function getCustomerTransactions(customerId: string | number): Promise<Transaction[]> {
   try {
-    // Inject the accountId directly into the path to match your URL structure
-    const response = await apiClient.get(`/transactions/customer/${accountId}`);
+    // Inject the customerId directly into the path to match your URL structure
+    const response = await apiClient.get(`/transactions/customer/${customerId}`);
     
     // Most Express/Node backends return the data inside a 'success' or 'data' property
     // Adjust based on your specific backend response structure
@@ -245,19 +244,20 @@ export interface Account {
   status: string;
 }
 
-export interface UserAccounts {
-  customerID: number;
-  accounts: Account[];
+// Update this to match your backend's new categorized structure
+export interface CategorizedAccounts {
+  current?: Account[];
+  savings?: Account[];
+  business?: Account[];
+  [key: string]: Account[] | undefined;
 }
 
-export async function getCurrentAccount(customerID: number): Promise<Account | null> {
+export async function getAllCategorizedAccounts(customerID: number): Promise<CategorizedAccounts | null> {
   try {
     const response = await apiClient.get("/user/api/getBalance", { params: { customerID } });
-    const accounts: Account[] = response.data.accounts;
-    console.log("Fetched accounts:", accounts);
-    return accounts.find(acc => acc.type === "current") || null;
-  } catch (error: any) {
-    console.error("Failed to fetch current account:", error);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch all accounts:", error);
     return null;
   }
 }
@@ -608,5 +608,241 @@ export const deleteCard = async (cardId: string | number): Promise<DeleteCardRes
   } catch (error: any) {
     console.error("Delete card error:", error.response?.data || error.message);
     return null;
+  }
+};
+
+export interface ActivatedAccount {
+  accountId: number;
+  customer_id: string;
+  account_number: string;
+  account_type: "business" | "savings" | "checking";
+  status: "active" | "not_active";
+}
+
+export interface ActivateAccountResponse {
+  success: boolean;
+  message: string;
+  data?: ActivatedAccount;
+}
+
+/**
+ * Activates a specific account type for a customer.
+ * Endpoint: PUT http://localhost:8000/admin/api/accounts/activate/business/:customerID/:accountType
+ * @param customerID - The ID of the customer
+ * @param accountType - The type of account to activate (e.g., 'business' or 'savings')
+ */
+export const activateAccountType = async (
+  customerID: string | number,
+  accountType: string
+): Promise<ActivateAccountResponse | null> => {
+  try {
+    // Note: Using .put as activation is generally an update/idempotent action
+    const response = await apiClient.put<ActivateAccountResponse>(
+      `/admin/api/accounts/activate/business/${customerID}/${accountType}`
+    );
+
+    return response.data;
+  } catch (error: any) {
+    console.error("Account activation error:", error.response?.data || error.message);
+    
+    // Return the error response if available, otherwise null
+    return error.response?.data || { success: false, message: "Server connection failed" };
+  }
+};
+
+
+// Add these to your existing auth.ts file
+
+export interface AnalyticItem {
+  category: string;
+  amount: number;
+  percentage: number;
+}
+
+export interface AnalyticsResponse {
+  success: boolean;
+  data: AnalyticItem[];
+}
+
+/**
+ * Fetches spending analytics for a specific customer
+ */
+export const getCustomerAnalytics = async (customerId: string | number): Promise<AnalyticItem[]> => {
+  try {
+    const response = await apiClient.get<AnalyticsResponse>(`/transactions/customer/${customerId}/analytics`);
+    return response.data.data; // Return the array inside the 'data' key
+  } catch (error) {
+    console.error("Error fetching analytics:", error);
+    throw error;
+  }
+};
+
+/**
+ * Interface for Paybill Request Body
+ */
+export interface PaybillRequest {
+  businessNumber: string;
+  accountReference: string;
+  amount: number;
+  description?: string;
+}
+
+/**
+ * Interface for the specific data returned on success
+ */
+export interface PaybillDetails {
+  success: boolean;
+  transactionId: number;
+  referenceCode: string;
+  amount: number;
+  newBalance: number;
+}
+
+/**
+ * Interface for the full API Response
+ */
+export interface PaybillResponse {
+  success: boolean;
+  message: string;
+  data: PaybillDetails;
+}
+
+/**
+ * Processes a paybill payment
+ */
+export const processPaybill = async (paymentData: PaybillRequest): Promise<PaybillResponse> => {
+  try {
+    const response = await apiClient.post<PaybillResponse>(
+      `/user/api/accounts/paybill`, 
+      paymentData
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Paybill Error:", error);
+    // Throw the error message from backend if it exists, otherwise a generic one
+    throw new Error(error.response?.data?.message || "Payment failed. Please check your balance.");
+  }
+};
+
+/**
+ * Interface for a single Paybill History Record
+ */
+export interface PaybillHistoryItem {
+  business_number: string;
+  account_reference: string;
+  amount: string; // Backend returns as string (decimal)
+  reference_code: string;
+  payment_date: string; // ISO Date string
+  business_name: string | null;
+}
+
+/**
+ * Interface for the History API Response
+ */
+export interface PaybillHistoryResponse {
+  success: boolean;
+  data: PaybillHistoryItem[];
+}
+
+/**
+ * Fetches the user's paybill transaction history
+ */
+export const getPaybillHistory = async (): Promise<PaybillHistoryResponse> => {
+  try {
+    const response = await apiClient.get<PaybillHistoryResponse>(
+      `/user/api/accounts/paybill/history`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Fetch Paybill History Error:", error);
+    throw new Error(
+      error.response?.data?.message || "Could not load payment history."
+    );
+  }
+};
+
+
+export interface TransferResponse {
+  success: boolean;
+  referenceCode: string;
+  from: string;
+  to: string;
+  amount: number;
+  newSourceBalance: number;
+}
+
+export interface TransferRequest {
+  fromAccountId: number;
+  toAccountId: number;
+  amount: number;
+}
+
+/**
+ * Processes an internal transfer between user accounts
+ */
+export const processTransfer = async (payload: TransferRequest): Promise<TransferResponse> => {
+  try {
+    const response = await apiClient.post<TransferResponse>(
+      `/user/api/transfer`,
+      payload
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Internal Transfer Error:", error);
+    throw new Error(
+      error.response?.data?.message || "Internal transfer failed. Please check your balance."
+    );
+  }
+};
+
+export interface AnalyticsSummary {
+  totalIncome: number;
+  totalExpenses: number;
+  savingsRate: string;
+  netWorth: number;
+}
+
+export interface SpendingCategory {
+  category: string;
+  amount: number;
+  percentage: number;
+}
+
+export interface MonthlyTrend {
+  month: string;
+  income: string | number;
+  expenses: string | number;
+}
+
+export interface BudgetGoal {
+  category: string;
+  budget: number;
+  spent: number;
+  currentBalance: number;
+}
+
+export interface AnalysisResponse {
+  success: boolean;
+  summary: AnalyticsSummary;
+  spendingByCategory: SpendingCategory[];
+  monthlyOverview: MonthlyTrend[];
+  budgetGoals: BudgetGoal[];
+}
+
+/**
+ * GET FULL ANALYSIS BY CUSTOMER ID
+ * Fetches summary stats, spending by category, monthly trends, and budget goals.
+ */
+export const getAccountAnalysis = async (customerId: string | number): Promise<AnalysisResponse> => {
+  try {
+    const response = await apiClient.get<AnalysisResponse>(
+      `/user/api/accounts/analysis/${customerId}`
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Fetch Analytics Error:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to load financial analysis. Please try again later."
+    );
   }
 };

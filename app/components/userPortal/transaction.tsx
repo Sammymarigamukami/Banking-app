@@ -21,8 +21,9 @@ export default function TransactionsPage() {
 
     const fetchTransactions = async () => {
       setLoading(true);
-      const data = await getCustomerTransactions(user.accountId);
+      const data = await getCustomerTransactions(user.id);
       setTransactions(data);
+      console.log("Fetched transactions:", data);
       setLoading(false);
     };
 
@@ -87,7 +88,7 @@ export default function TransactionsPage() {
                     <TableCell className="font-medium">{transaction.description || "-"}</TableCell>
                     <TableCell>
                       <Badge variant="secondary" className="font-normal">
-                        {transaction.transaction_type}
+                        {transaction.type}
                       </Badge>
                     </TableCell>
                     <TableCell

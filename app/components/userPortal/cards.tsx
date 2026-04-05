@@ -184,7 +184,7 @@ export default function CardsPage() {
 
       {/* --- TRUE DATA MODAL --- */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px] ">
           <DialogHeader>
             <DialogTitle>Sensitive Card Details</DialogTitle>
           </DialogHeader>
@@ -230,8 +230,8 @@ export default function CardsPage() {
         <CardContent>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { title: "Cashback", value: "2%", description: "On all purchases" },
-              { title: "Points Earned", value: "12,450", description: "This month" },
+              { title: "Cashback", value: "0%", description: "On all purchases" },
+              { title: "Points Earned", value: "0", description: "This month" },
               { title: "Travel Insurance", value: "Included", description: "Up to Ksh500K" },
               { title: "ATM Withdrawals", value: "Free", description: "Worldwide" },
             ].map((benefit, i) => (
