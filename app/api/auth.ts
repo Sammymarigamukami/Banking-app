@@ -202,7 +202,7 @@ export function useEmployeeAuth() {
       } catch (err) {
         console.error("Employee Auth Check Failed:", err);
         localStorage.clear();
-        navigate("/AdminLogin");
+        navigate("/EmployeeLogin");
       }
     };
 

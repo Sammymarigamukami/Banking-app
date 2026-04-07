@@ -19,10 +19,13 @@ import {
   issueNewCard, 
   freezeCard, 
   unfreezeCard, 
-  deleteCard 
+  deleteCard, 
+  useAuthRedirect
 } from "~/api/auth"
 
 export default function CardsPage() {
+  const customer = useAuthRedirect()
+  console.log("Authenticated customer card page", customer)
   const [cards, setCards] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [processingId, setProcessingId] = useState<string | null>(null)
@@ -149,7 +152,7 @@ export default function CardsPage() {
                     <div className="flex items-end justify-between">
                       <div>
                         <p className="text-[10px] uppercase opacity-60">Card Holder</p>
-                        <p className="text-sm font-medium">{maskText("Customer Name")}</p>
+                        <p className="text-sm font-medium">{maskText(customer.username)}</p>
                       </div>
                       <div>
                         <p className="text-[10px] uppercase opacity-60">Expires</p>
@@ -201,7 +204,7 @@ export default function CardsPage() {
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="text-[9px] opacity-40 uppercase">Card Holder</p>
-                    <p className="text-sm">CUSTOMER NAME</p>
+                    <p className="text-sm">{customer.username}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-[9px] opacity-40 uppercase">Expiry Date</p>

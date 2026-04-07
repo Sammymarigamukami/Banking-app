@@ -78,7 +78,7 @@ export function CardPreview() {
       <CardHeader className="px-0 pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-bold tracking-tight">Your Primary Card</CardTitle>
-          <Link to="/dashboard/cards" className="text-xs font-semibold text-primary hover:opacity-80 transition-opacity">
+          <Link to="/customerPortal/cards" className="text-xs font-semibold text-primary hover:opacity-80 transition-opacity">
             View All
           </Link>
         </div>
