@@ -14,6 +14,7 @@ export default [
         route("Transactions", "components/userPortal/transaction.tsx"),
         route("Transfer", "components/userPortal/transfer.tsx"),
         route("Settings", "components/userPortal/settings.tsx"),
+        route("loan", "components/userPortal/loan.tsx"),
     ]),
     route("adminPortal", "adminPortal/pages/layout.tsx", [
         index("adminPortal/pages/dashboard.tsx"),

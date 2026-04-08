@@ -14,14 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '~/components/ui/select'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '~/components/ui/form'
+
 import { Card } from '~/components/ui/card'
 import {
   loanFormSchema,
@@ -30,8 +23,9 @@ import {
   calculateMonthlyPayment,
   calculateTotalInterest,
 } from '~/lib/loan-validation'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
 
-export function LoanApplication() {
+export default function LoanApplication() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isCompleted, setIsCompleted] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<{
@@ -197,7 +191,7 @@ export function LoanApplication() {
                             render={({ field }) => (
                               <FormItem className="mb-6">
                                 <FormLabel className="text-slate-700 dark:text-slate-300">
-                                  Loan Amount: ${loanAmount.toLocaleString()}
+                                  Loan Amount: Ksh{loanAmount.toLocaleString()}
                                 </FormLabel>
                                 <FormControl>
                                   <div className="space-y-3">
@@ -501,7 +495,7 @@ export function LoanApplication() {
                 <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
                   <span className="text-slate-600 dark:text-slate-400 text-sm">Loan Amount</span>
                   <span className="font-semibold text-slate-900 dark:text-slate-50">
-                    ${loanAmount.toLocaleString()}
+                    Ksh {loanAmount.toLocaleString()}
                   </span>
                 </div>
 
@@ -522,21 +516,21 @@ export function LoanApplication() {
                 <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
                   <span className="text-slate-600 dark:text-slate-400 text-sm">Monthly Payment</span>
                   <span className="font-semibold text-emerald-600 dark:text-emerald-400 text-lg">
-                    ${monthlyPayment.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                    Ksh {monthlyPayment.toLocaleString()}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
                   <span className="text-slate-600 dark:text-slate-400 text-sm">Total Interest</span>
                   <span className="font-semibold text-slate-900 dark:text-slate-50">
-                    ${totalInterest.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                    Ksh {totalInterest.toLocaleString()}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-center pt-2">
                   <span className="text-slate-900 dark:text-slate-50 font-semibold">Total Amount</span>
                   <span className="font-bold text-lg text-slate-900 dark:text-slate-50">
-                    ${totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+                    Ksh {totalAmount.toLocaleString()}
                   </span>
                 </div>
               </div>

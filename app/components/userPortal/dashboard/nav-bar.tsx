@@ -15,6 +15,8 @@ const navLinks = [
   { name: "Cards", path: "/customerPortal/cards" },
   { name: "Payments", path: "/customerPortal/payments" },
   { name: "Transactions", path: "/customerPortal/transactions" },
+  { name: "Settings", path: "/customerPortal/settings" },
+  { name: "Loan", path: "/customerPortal/loan" },
   // { name: "Transfer", path: "/customerPortal/transfer" },
 ]
 
