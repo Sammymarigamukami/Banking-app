@@ -846,3 +846,98 @@ export const getAccountAnalysis = async (customerId: string | number): Promise<A
     );
   }
 };
+
+export interface CreateFDRequest {
+  accountId: number;
+  amount: number;
+  durationMonths: number;
+  interestRate: number;
+}
+
+export interface FDResponseData {
+  fd_id: number;
+  reference_code: string;
+}
+
+export interface CreateFDResponse {
+  success: boolean;
+  message: string;
+  data: FDResponseData;
+}
+
+/**
+ * CREATE FIXED DEPOSIT
+ * Deducts funds from savings and creates a locked FD record.
+ */
+export const createFixedDeposit = async (fdData: CreateFDRequest): Promise<CreateFDResponse> => {
+  try {
+    const response = await apiClient.post<CreateFDResponse>(
+      `/user/api/fd/create`, 
+      fdData
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error("Create FD Error:", error);
+    throw new Error(
+      error.response?.data?.message || "Failed to create Fixed Deposit. Please check your balance."
+    );
+  }
+};
+
+export interface EligibleFD {
+  fd_id: number;
+  principal_amount: string; // Keep as string if coming from MySQL Decimal
+  interest_rate: string;
+  maturity_date: string;
+}
+
+export interface EligibleFDResponse {
+  success: boolean;
+  data: EligibleFD[];
+}
+
+/**
+ * GET ELIGIBLE COLLATERAL
+ * Fetches all active Fixed Deposits that can be used for online loans.
+ */
+export const getEligibleFDs = async (): Promise<EligibleFDResponse> => {
+  try {
+    const response = await apiClient.get<EligibleFDResponse>('/user/api/fd/eligible');
+    return response.data;
+  } catch (error: any) {
+    console.error("Fetch Eligible FDs Error:", error);
+    throw new Error(error.response?.data?.message || "Could not load collateral options.");
+  }
+};
+
+export interface FDPortfolioItem {
+  fd_id: number;
+  customer_id: number;
+  account_id: number;
+  principal_amount: string;
+  interest_rate: string;
+  start_date: string;
+  maturity_date: string;
+  status: 'active' | 'matured' | 'liquidated' | 'held_as_collateral';
+  created_at: string;
+  source_account: string;
+}
+
+export interface FDPortfolioResponse {
+  success: boolean;
+  data: FDPortfolioItem[];
+}
+
+/**
+ * GET FD PORTFOLIO
+ * Fetches all Fixed Deposits owned by the current user.
+ */
+export const getMyFDPortfolio = async (): Promise<FDPortfolioResponse> => {
+  try {
+    const response = await apiClient.get<FDPortfolioResponse>('/user/api/fd/my-portfolio');
+    return response.data;
+  } catch (error: any) {
+    console.error("Fetch Portfolio Error:", error);
+    throw new Error(error.response?.data?.message || "Unable to load your FD portfolio.");
+  }
+};

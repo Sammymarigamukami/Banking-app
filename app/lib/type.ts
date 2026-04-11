@@ -108,3 +108,13 @@ export interface DashboardStats {
   totalTransactionVolume: number
   highRiskAlerts: number
 }
+
+export interface LoanProduct {
+  id: string
+  type_name: string
+  base_interest_rate: number
+  max_duration_months: number
+  min_amount: number
+  max_amount: number
+  is_online: boolean
+}
