@@ -279,26 +279,15 @@ export default function SettingsPage() {
 
           </TabsContent>
 
-          <TabsContent value="loan-products" className="space-y-6 focus-visible:outline-none">
-            <Card className="flex flex-col h-full max-h-[calc(100vh-200px)]">
-                  {/* Header with Search and Add Button */}
-                  <div className="sticky top-0 z-10 bg-white pb-4 border-b border-slate-100 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                    <div className="w-full sm:w-64">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
-                        <Input
-                          placeholder="Search loan products..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                          className="pl-10 bg-slate-50"
-                        />
-                      </div>
-                    </div>
+          <TabsContent value="loan-products" className="space-y-6 overflow-y-auto mb-10">
+            <Card className="flex flex-col h-full border border-slate-200 p-6 ">
+                  <div className="top-0 z-10 bg-white pb-4 border-b border-slate-100 gap-4 items-end justify-between">
                     <Button
                       onClick={handleAddProduct}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                      className="gap-2"
+                      variant="outline"
                     >
-                      <Plus className="w-4 h-4 mr-2" />
+                      <Plus className="w-4 h-4"/>
                       Add Product
                     </Button>
                   </div>
@@ -319,7 +308,7 @@ export default function SettingsPage() {
                   {filteredProducts.map((product) => (
                     <Card
                       key={product.id}
-                      className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-slate-200"
+                      className="p-6 hover:shadow-lg transition-shadow cursor-pointer border border-slate-200 mb-10"
                       onClick={() => handleEditProduct(product)}
                     >
                       <div className="space-y-4">

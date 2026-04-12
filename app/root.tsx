@@ -18,8 +18,7 @@ import { PaybillProvider } from "./components/userPortal/dashboard/context/paybi
 import { Paybill } from "./components/userPortal/dashboard/_components/paybill"
 import { SendMoneyProvider } from "./components/userPortal/dashboard/context/sendMoneyContext"
 import { SendMoney } from "./components/userPortal/dashboard/_components/send-money"
-import { FloatingMessaging } from "./components/userPortal/dashboard/_components/floating-messaging"
-import { FloatingNotifications } from "./components/userPortal/dashboard/_components/floating-notification"
+
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -36,8 +35,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <PaybillProvider>
         <SendMoneyProvider>
         {children}
-        <FloatingNotifications />
-        <FloatingMessaging />
         <SendMoney />
         <Paybill />
         <RequestMoney />
