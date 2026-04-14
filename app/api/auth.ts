@@ -941,3 +941,72 @@ export const getMyFDPortfolio = async (): Promise<FDPortfolioResponse> => {
     throw new Error(error.response?.data?.message || "Unable to load your FD portfolio.");
   }
 };
+
+/**
+ * REPORT EXPORT ENDPOINTS
+ */
+
+// Since these endpoints return a file stream (Blob), we don't need a JSON interface 
+// for the data, but we can define the parameters for type safety.
+export interface ReportQueryParams {
+  period?: 'today' | 'week' | 'month' | 'quarter' | 'custom';
+  date?: string; // For daily reports (YYYY-MM-DD)
+  format: 'csv' | 'pdf' | 'excel';
+}
+
+/**
+ * DOWNLOAD TRANSACTION REPORT
+ * Hits the administrative endpoint to fetch CSV/PDF data.
+ */
+export const downloadTransactionReport = async (params: ReportQueryParams): Promise<Blob> => {
+  try {
+    const response = await apiClient.get('/transactions/api/admin/reports/transactions', {
+      params,
+      responseType: 'blob', // Required to handle file downloads
+      headers: {
+        'Accept': params.format === 'csv' ? 'text/csv' : 'application/pdf',
+      }
+    });
+    
+    // Return the raw blob data to be processed by the UI
+    return response.data as unknown as Blob;
+  } catch (error: any) {
+    console.error("Report Export Error:", error);
+    throw new Error(error.response?.data?.message || "Unable to generate report.");
+  }
+};
+
+/**
+ * DOWNLOAD DAILY ADMIN REPORT
+ * Specifically for the daily log endpoint.
+ */
+export const downloadDailyAdminReport = async (date: string, format: 'csv' | 'pdf' | 'excel'): Promise<Blob> => {
+  try {
+    const response = await apiClient.get('/transactions/api/admin/reports/daily', {
+      params: { date, format },
+      responseType: 'blob',
+    });
+    return response.data as unknown as Blob;
+  } catch (error: any) {
+    console.error("Daily Report Error:", error);
+    throw new Error("Failed to download daily log.");
+  }
+};
+
+/**
+ * DOWNLOAD ACCOUNTS REPORT
+ * Fetches all customer accounts in CSV/PDF format for administrative review.
+ */
+export const downloadAccountsReport = async (format: 'csv' | 'pdf' | 'excel'): Promise<Blob> => {
+  try {
+    const response = await apiClient.get('/admin/api/admin/reports/accounts', {
+      params: { format },
+      responseType: 'blob',
+    });
+    
+    return response.data as unknown as Blob;
+  } catch (error: any) {
+    console.error("Accounts Report Error:", error);
+    throw new Error("Unable to generate accounts report.");
+  }
+};
